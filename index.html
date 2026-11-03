@@ -361,6 +361,33 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px 16px 30p
     <div class="res" id="lmpRes">Укажите дату</div>
     <div class="note">ПДР = ДПМ + 280 дней (правило Негеле) при регулярном 28-дневном цикле.</div>
   </div>
+  <div class="card">
+    <h3>Срок по предыдущему УЗИ</h3>
+    <label>Дата предыдущего УЗИ</label>
+    <input id="puDate" type="date">
+    <div class="sub">Срок на дату предыдущего УЗИ</div>
+    <div class="row2"><input id="puW" inputmode="numeric" placeholder="недель"><input id="puD" inputmode="numeric" placeholder="дней (0–6)"></div>
+    <label>Дата текущего исследования</label>
+    <input id="puNow" type="date">
+    <div class="res" id="puRes">Укажите дату и срок предыдущего УЗИ</div>
+    <div class="note">Опорным считают самое раннее УЗИ с измерением КТР (оптимально КТР 45–84 мм, 11–14 нед.). Срок, установленный по нему, в дальнейшем не пересчитывают по фетометрии (ISUOG).</div>
+  </div>
+  <div class="card">
+    <h3>Срок при ЭКО</h3>
+    <label>Событие</label>
+    <select id="ivfT">
+      <option value="0">Пункция / оплодотворение (день 0)</option>
+      <option value="3">Перенос эмбриона 3-х суток</option>
+      <option value="5" selected>Перенос бластоцисты 5-х суток</option>
+      <option value="6">Перенос бластоцисты 6-х суток</option>
+    </select>
+    <label style="margin-top:8px">Дата события</label>
+    <input id="ivfDate" type="date">
+    <label style="margin-top:8px">Дата исследования</label>
+    <input id="ivfNow" type="date">
+    <div class="res" id="ivfRes">Укажите дату</div>
+    <div class="note">ПДР = дата переноса + 266 − возраст эмбриона (сут.); срок = дни от переноса + возраст эмбриона + 14 (ACOG 2017). Подходит и для криопереноса. Срок при ЭКО по УЗИ не пересчитывают.</div>
+  </div>
 </div>
 </section>
 
@@ -473,6 +500,27 @@ function calcLMP(){
   const l=parseD('lmp'); if(!l){$('lmpRes').textContent='Укажите дату';return}
   const ex=parseD('lmpDate')||today(), days=(ex-l)/864e5, edd=new Date(l.getTime()+280*864e5);
   $('lmpRes').innerHTML=days<0?'<span class="warn">Дата исследования раньше ДПМ</span>':`Срок на дату исследования: <b>${ga(days)}</b><br>ПДР: <b>${fmtD(edd)}</b>`;
+}
+// общий вывод: срок на дату исследования (дни от условной ДПМ) + ПДР
+function gaOut(gaDays,ex){
+  const lmp=new Date(ex.getTime()-Math.round(gaDays)*864e5), edd=new Date(lmp.getTime()+280*864e5);
+  let s=`Срок на дату исследования: <b>${ga(gaDays)}</b><br>ПДР: <b>${fmtD(edd)}</b><br>Расчётная ДПМ: ${fmtD(lmp)}`;
+  if(gaDays>42*7)s+='<br><span class="warn">Срок больше 42 нед. — проверьте даты</span>';
+  return s;
+}
+function calcPU(){
+  const pd=parseD('puDate'),w=parseInt($('puW').value),dd=parseInt($('puD').value)||0;
+  if(!pd||!(w>=0)){$('puRes').textContent='Укажите дату и срок предыдущего УЗИ';return}
+  if(dd>6||dd<0){$('puRes').innerHTML='<span class="warn">Дни — от 0 до 6</span>';return}
+  const ex=parseD('puNow')||today(), diff=(ex-pd)/864e5;
+  if(diff<0){$('puRes').innerHTML='<span class="warn">Текущая дата раньше предыдущего УЗИ</span>';return}
+  $('puRes').innerHTML=gaOut(w*7+dd+diff,ex)+`<br>Прошло с предыдущего УЗИ: ${ga(diff)}`;
+}
+function calcIVF(){
+  const t=parseD('ivfDate'); if(!t){$('ivfRes').textContent='Укажите дату';return}
+  const age=+$('ivfT').value, ex=parseD('ivfNow')||today(), diff=(ex-t)/864e5;
+  if(diff<0){$('ivfRes').innerHTML='<span class="warn">Дата исследования раньше даты события</span>';return}
+  $('ivfRes').innerHTML=gaOut(diff+age+14,ex);
 }
 
 // нормы
@@ -987,10 +1035,10 @@ $('bCopy').onclick=async()=>{const t=$('bTxt');try{await navigator.clipboard.wri
  const b=$('bCopy');b.textContent='Скопировано ✓';setTimeout(()=>b.textContent='Копировать',1500)};
 calcBR();
 
-function recalc(){calcThy();calcPr();calcB();calcO();calcE();calcT();calcCRL();calcLMP()}
+function recalc(){calcThy();calcPr();calcB();calcO();calcE();calcT();calcCRL();calcLMP();calcPU();calcIVF()}
 document.addEventListener('input',e=>{if(e.target.id==='nSearch')renderNorms();else if(e.target.id!=='tplText')recalc()});
 document.addEventListener('change',e=>{if(e.target.tagName!=='TEXTAREA')recalc()});
-$('crlDate').value=$('lmpDate').value=toInput(today());
+$('crlDate').value=$('lmpDate').value=$('puNow').value=$('ivfNow').value=toInput(today());
 renderNorms();loadTpl();recalc();
 
 // ===== PWA: офлайн и установка =====
