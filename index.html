@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Помощник врача УЗИ</title>
+<meta name="description" content="Калькуляторы, нормы и шаблоны протоколов для врача ультразвуковой диагностики">
+<style>
+:root{--bg:#f4f7fa;--card:#fff;--text:#1b2733;--muted:#5d6b78;--line:#dde4ea;--accent:#0a7b83;--accent-soft:#e3f3f4;--ok:#1e8e3e;--warn:#c77700;--bad:#c62828}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f161c;--card:#172129;--text:#e5ecf1;--muted:#93a3b0;--line:#2a3742;--accent:#3cc2c9;--accent-soft:#163238;--ok:#5bc47a;--warn:#f0a840;--bad:#ef6b6b}}
+:root[data-theme="dark"]{--bg:#0f161c;--card:#172129;--text:#e5ecf1;--muted:#93a3b0;--line:#2a3742;--accent:#3cc2c9;--accent-soft:#163238;--ok:#5bc47a;--warn:#f0a840;--bad:#ef6b6b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{background:var(--accent);color:#fff;padding:18px 16px 14px}
+header h1{margin:0;font-size:21px}
+header p{margin:2px 0 0;opacity:.85;font-size:13px}
+nav{display:flex;gap:6px;padding:10px 16px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5;overflow-x:auto}
+nav button{flex:none;border:1px solid var(--line);background:transparent;color:var(--text);padding:8px 14px;border-radius:20px;font-size:14px;cursor:pointer}
+nav button.active{background:var(--accent);border-color:var(--accent);color:#fff}
+main{max-width:980px;margin:0 auto;padding:16px}
+.tab{display:none}.tab.active{display:block}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+.card h3{margin:0 0 10px;font-size:16px;color:var(--accent)}
+label{display:block;font-size:12px;color:var(--muted);margin-bottom:2px}
+input,select,textarea{width:100%;padding:8px 9px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--text);font:inherit}
+.row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px}
+.row2{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:8px}
+.sub{font-size:13px;font-weight:600;margin:8px 0 4px}
+.res{margin-top:8px;padding:10px;border-radius:8px;background:var(--accent-soft);font-size:14px;min-height:20px}
+.ok{color:var(--ok);font-weight:600}.warn{color:var(--warn);font-weight:600}.bad{color:var(--bad);font-weight:600}
+.chk{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--text);margin:3px 0}
+.chk input{width:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:12px}
+td:first-child{font-weight:600;white-space:nowrap}
+.tablewrap{overflow-x:auto}
+textarea{min-height:320px;font-family:ui-monospace,Consolas,monospace;font-size:13px;line-height:1.45}
+.btn{border:none;background:var(--accent);color:#fff;padding:9px 16px;border-radius:8px;font:inherit;cursor:pointer}
+.btn.sec{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.note{font-size:12px;color:var(--muted);margin-top:6px}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:20px 16px 30px}
+@media(max-width:420px){.row{grid-template-columns:1fr 1fr 1fr;gap:5px}input{padding:7px 6px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Помощник врача УЗИ</h1>
+  <p>Калькуляторы · нормы · шаблоны протоколов</p>
+</header>
+<nav>
+  <button class="active" data-tab="calc">Калькуляторы</button>
+  <button data-tab="tirads">TI-RADS</button>
+  <button data-tab="ob">Акушерство</button>
+  <button data-tab="norms">Нормы</button>
+  <button data-tab="tpl">Шаблоны</button>
+</nav>
+<main>
+
+<!-- КАЛЬКУЛЯТОРЫ -->
+<section class="tab active" id="calc">
+<div class="grid">
+  <div class="card">
+    <h3>Щитовидная железа</h3>
+    <label>Пол</label>
+    <select id="thySex" style="margin-bottom:8px"><option value="f">Женский (норма ≤ 18 мл)</option><option value="m">Мужской (норма ≤ 25 мл)</option></select>
+    <div class="sub">Правая доля, мм (длина / ширина / толщина)</div>
+    <div class="row"><input id="tr1" inputmode="decimal" placeholder="Д"><input id="tr2" inputmode="decimal" placeholder="Ш"><input id="tr3" inputmode="decimal" placeholder="Т"></div>
+    <div class="sub">Левая доля, мм</div>
+    <div class="row"><input id="tl1" inputmode="decimal" placeholder="Д"><input id="tl2" inputmode="decimal" placeholder="Ш"><input id="tl3" inputmode="decimal" placeholder="Т"></div>
+    <div class="res" id="thyRes">Введите размеры долей</div>
+    <div class="note">V доли = Д×Ш×Т×0,479 (Brunn). Перешеек в объём не включается.</div>
+  </div>
+
+  <div class="card">
+    <h3>Предстательная железа</h3>
+    <div class="sub">Размеры, мм (поперечный / передне-задний / продольный)</div>
+    <div class="row"><input id="p1" inputmode="decimal" placeholder="П"><input id="p2" inputmode="decimal" placeholder="ПЗ"><input id="p3" inputmode="decimal" placeholder="Пр"></div>
+    <label>ПСА общий, нг/мл (необязательно)</label>
+    <input id="psa" inputmode="decimal" placeholder="напр. 4,2">
+    <div class="res" id="prRes">Введите размеры</div>
+    <div class="note">V = П×ПЗ×Пр×0,523. Плотность ПСА &gt; 0,15 нг/мл/см³ — повод для уролога.</div>
+  </div>
+
+  <div class="card">
+    <h3>Мочевой пузырь / остаточная моча</h3>
+    <div class="sub">До мочеиспускания, мм</div>
+    <div class="row"><input id="b1" inputmode="decimal" placeholder="Д"><input id="b2" inputmode="decimal" placeholder="Ш"><input id="b3" inputmode="decimal" placeholder="ПЗ"></div>
+    <div class="sub">После мочеиспускания, мм</div>
+    <div class="row"><input id="r1" inputmode="decimal" placeholder="Д"><input id="r2" inputmode="decimal" placeholder="Ш"><input id="r3" inputmode="decimal" placeholder="ПЗ"></div>
+    <div class="res" id="bRes">Введите размеры</div>
+    <div class="note">V = Д×Ш×ПЗ×0,52. Остаточная моча у взрослых в норме ≤ 50 мл (или &lt; 10% от исходного объёма).</div>
+  </div>
+
+  <div class="card">
+    <h3>Яичник</h3>
+    <div class="sub">Размеры, мм</div>
+    <div class="row"><input id="o1" inputmode="decimal" placeholder="Д"><input id="o2" inputmode="decimal" placeholder="Ш"><input id="o3" inputmode="decimal" placeholder="Т"></div>
+    <div class="res" id="oRes">Введите размеры</div>
+    <div class="note">V = Д×Ш×Т×0,523. Репродуктивный возраст: ориентир ≤ 10 мл; в постменопаузе ≤ 5 мл.</div>
+  </div>
+
+  <div class="card">
+    <h3>Объём эллипсоида (любое образование)</h3>
+    <div class="sub">Размеры, мм</div>
+    <div class="row"><input id="e1" inputmode="decimal" placeholder="A"><input id="e2" inputmode="decimal" placeholder="B"><input id="e3" inputmode="decimal" placeholder="C"></div>
+    <div class="res" id="eRes">Введите размеры</div>
+    <div class="note">V = A×B×C×0,523 (π/6).</div>
+  </div>
+</div>
+</section>
+
+<!-- TI-RADS -->
+<section class="tab" id="tirads">
+<div class="grid">
+  <div class="card">
+    <h3>ACR TI-RADS (2017)</h3>
+    <label>Структура (composition)</label>
+    <select id="tComp"><option value="0">Кистозный / почти полностью кистозный (0)</option><option value="0">Губчатый (0)</option><option value="1">Смешанный кистозно-солидный (1)</option><option value="2" selected>Солидный / почти полностью солидный (2)</option></select>
+    <label style="margin-top:8px">Эхогенность</label>
+    <select id="tEcho"><option value="0">Анэхогенный (0)</option><option value="1">Гипер- / изоэхогенный (1)</option><option value="2" selected>Гипоэхогенный (2)</option><option value="3">Выраженно гипоэхогенный (3)</option></select>
+    <label style="margin-top:8px">Форма (в поперечном сечении)</label>
+    <select id="tShape"><option value="0">Шире, чем выше (0)</option><option value="3">Выше, чем шире (3)</option></select>
+    <label style="margin-top:8px">Контур</label>
+    <select id="tMargin"><option value="0">Ровный (0)</option><option value="0">Нечёткий (0)</option><option value="2">Дольчатый / неровный (2)</option><option value="3">Экстратиреоидное распространение (3)</option></select>
+    <div class="sub">Эхогенные включения (можно несколько)</div>
+    <label class="chk"><input type="checkbox" class="tf" value="0"> Нет / крупные артефакты «хвост кометы» (0)</label>
+    <label class="chk"><input type="checkbox" class="tf" value="1"> Макрокальцинаты (1)</label>
+    <label class="chk"><input type="checkbox" class="tf" value="2"> Периферические («ободковые») кальцинаты (2)</label>
+    <label class="chk"><input type="checkbox" class="tf" value="3"> Точечные эхогенные фокусы (3)</label>
+    <label style="margin-top:8px">Максимальный размер узла, мм</label>
+    <input id="tSize" inputmode="decimal" placeholder="напр. 14">
+  </div>
+  <div class="card">
+    <h3>Результат</h3>
+    <div class="res" id="tRes" style="font-size:15px"></div>
+    <div class="tablewrap" style="margin-top:12px">
+    <table>
+      <tr><th>Категория</th><th>Баллы</th><th>ТАБ</th><th>Наблюдение</th></tr>
+      <tr><td>TR1</td><td>0</td><td>нет</td><td>нет</td></tr>
+      <tr><td>TR2</td><td>2</td><td>нет</td><td>нет</td></tr>
+      <tr><td>TR3</td><td>3</td><td>≥ 25 мм</td><td>≥ 15 мм</td></tr>
+      <tr><td>TR4</td><td>4–6</td><td>≥ 15 мм</td><td>≥ 10 мм</td></tr>
+      <tr><td>TR5</td><td>≥ 7</td><td>≥ 10 мм</td><td>≥ 5 мм</td></tr>
+    </table>
+    </div>
+    <div class="note">Решение о ТАБ принимается с учётом клиники и анамнеза. Калькулятор — вспомогательный инструмент.</div>
+  </div>
+</div>
+</section>
+
+<!-- АКУШЕРСТВО -->
+<section class="tab" id="ob">
+<div class="grid">
+  <div class="card">
+    <h3>Срок по КТР (Robinson)</h3>
+    <label>КТР, мм</label>
+    <input id="crl" inputmode="decimal" placeholder="напр. 45">
+    <label style="margin-top:8px">Дата исследования</label>
+    <input id="crlDate" type="date">
+    <div class="res" id="crlRes">Введите КТР</div>
+    <div class="note">Формула достоверна при КТР 10–84 мм. Срок (дни) = 8,052×√(КТР×1,037)+23,73.</div>
+  </div>
+  <div class="card">
+    <h3>Срок по дате последней менструации</h3>
+    <label>Первый день последней менструации</label>
+    <input id="lmp" type="date">
+    <label style="margin-top:8px">Дата исследования</label>
+    <input id="lmpDate" type="date">
+    <div class="res" id="lmpRes">Укажите дату</div>
+    <div class="note">ПДР = ДПМ + 280 дней (правило Негеле) при регулярном 28-дневном цикле.</div>
+  </div>
+</div>
+</section>
+
+<!-- НОРМЫ -->
+<section class="tab" id="norms">
+<div class="card">
+  <h3>Ориентировочные нормы у взрослых</h3>
+  <input id="nSearch" placeholder="Поиск: печень, холедох, почка…" style="margin-bottom:10px">
+  <div class="tablewrap"><table id="nTable"></table></div>
+  <div class="note">Значения ориентировочные; при заключении опирайтесь на нормативы, принятые в вашем учреждении, и клинический контекст.</div>
+</div>
+</section>
+
+<!-- ШАБЛОНЫ -->
+<section class="tab" id="tpl">
+<div class="card">
+  <h3>Шаблоны протоколов (вариант нормы)</h3>
+  <select id="tplSel"></select>
+  <div class="bar">
+    <button class="btn" id="copyBtn">Копировать</button>
+    <button class="btn sec" id="resetBtn">Сбросить</button>
+  </div>
+  <textarea id="tplText"></textarea>
+  <div class="note">Текст можно редактировать прямо в поле, затем скопировать в протокол.</div>
+</div>
+</section>
+
+</main>
+<footer>Жумагулов Н. М., врач ультразвуковой диагностики · АДЦ «Сономедплюс», г. Ош<br>Справочный инструмент для специалистов. Не заменяет клиническое решение врача.</footer>
+
+<script>
+const $=id=>document.getElementById(id);
+const num=id=>{const v=parseFloat(String($(id).value).replace(',','.'));return isFinite(v)&&v>0?v:null};
+const v3=(ids,k)=>{const a=ids.map(num);return a.every(x=>x)?a[0]*a[1]*a[2]*k/1000:null};
+const f=(x,d=1)=>x.toFixed(d).replace('.',',');
+
+// вкладки
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');$(b.dataset.tab).classList.add('active');
+});
+
+function calcThy(){
+  const r=v3(['tr1','tr2','tr3'],0.479), l=v3(['tl1','tl2','tl3'],0.479);
+  if(!r&&!l){$('thyRes').textContent='Введите размеры долей';return}
+  let s=''; if(r)s+=`Правая доля: <b>${f(r)} мл</b><br>`; if(l)s+=`Левая доля: <b>${f(l)} мл</b><br>`;
+  if(r&&l){const t=r+l, lim=$('thySex').value==='f'?18:25;
+    s+=`Общий объём: <b>${f(t)} мл</b> — `+(t>lim?`<span class="warn">увеличен (норма ≤ ${lim} мл)</span>`:`<span class="ok">в пределах нормы</span>`);
+    const asym=Math.abs(r-l)/Math.max(r,l)*100; if(asym>30)s+=`<br>Асимметрия долей: ${f(asym,0)}%`;}
+  $('thyRes').innerHTML=s;
+}
+function calcPr(){
+  const v=v3(['p1','p2','p3'],0.523); if(!v){$('prRes').textContent='Введите размеры';return}
+  let s=`Объём: <b>${f(v)} см³</b> — `+(v>30?`<span class="warn">увеличен (ориентир ≤ 25–30 см³)</span>`:`<span class="ok">в пределах нормы</span>`);
+  const p=num('psa'); if(p){const d=p/v; s+=`<br>Плотность ПСА: <b>${f(d,2)}</b> нг/мл/см³ — `+(d>0.15?'<span class="warn">повышена</span>':'<span class="ok">не повышена</span>')}
+  $('prRes').innerHTML=s;
+}
+function calcB(){
+  const b=v3(['b1','b2','b3'],0.52), r=v3(['r1','r2','r3'],0.52);
+  if(!b&&!r){$('bRes').textContent='Введите размеры';return}
+  let s=''; if(b)s+=`Объём до мочеиспускания: <b>${f(b,0)} мл</b><br>`;
+  if(r){s+=`Остаточная моча: <b>${f(r,0)} мл</b>`; if(b)s+=` (${f(r/b*100,0)}%)`;
+    s+=' — '+(r>50||(b&&r/b>0.1)?'<span class="warn">увеличена</span>':'<span class="ok">в пределах нормы</span>')}
+  $('bRes').innerHTML=s;
+}
+function calcO(){const v=v3(['o1','o2','o3'],0.523);$('oRes').innerHTML=v?`Объём: <b>${f(v)} мл</b>`+(v>10?' — <span class="warn">больше ориентира 10 мл</span>':''):'Введите размеры'}
+function calcE(){const v=v3(['e1','e2','e3'],0.523);$('eRes').innerHTML=v?`Объём: <b>${f(v,2)} мл (см³)</b>`:'Введите размеры'}
+
+function calcT(){
+  let p=+$('tComp').value + +$('tEcho').value + +$('tShape').value + +$('tMargin').value;
+  document.querySelectorAll('.tf:checked').forEach(c=>p+=+c.value);
+  let tr,fna,fu,cls;
+  if(p<=1){tr='TR1 — доброкачественный';fna=null;fu=null;cls='ok'}
+  else if(p===2){tr='TR2 — не подозрительный';fna=null;fu=null;cls='ok'}
+  else if(p===3){tr='TR3 — слабо подозрительный';fna=25;fu=15;cls='warn'}
+  else if(p<=6){tr='TR4 — умеренно подозрительный';fna=15;fu=10;cls='warn'}
+  else {tr='TR5 — высоко подозрительный';fna=10;fu=5;cls='bad'}
+  let s=`Сумма баллов: <b>${p}</b><br><span class="${cls}">ACR ${tr}</span><br>`;
+  const sz=num('tSize');
+  if(fna===null)s+='ТАБ не показана.';
+  else if(!sz)s+=`ТАБ при размере ≥ ${fna} мм; наблюдение при ≥ ${fu} мм.`;
+  else if(sz>=fna)s+=`<b>Рекомендована ТАБ</b> (размер ${f(sz,0)} мм ≥ ${fna} мм).`;
+  else if(sz>=fu)s+=`<b>Динамическое наблюдение</b> (размер ${f(sz,0)} мм ≥ ${fu} мм).`;
+  else s+=`Размер ${f(sz,0)} мм — ниже порогов, ТАБ и наблюдение не требуются.`;
+  $('tRes').innerHTML=s;
+}
+
+const today=()=>{const d=new Date();d.setHours(0,0,0,0);return d};
+const toInput=d=>new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10);
+const parseD=id=>$(id).value?new Date($(id).value+'T00:00:00'):null;
+const fmtD=d=>d.toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric'});
+const ga=days=>`${Math.floor(days/7)} нед. ${Math.round(days%7)} дн.`;
+function calcCRL(){
+  const c=num('crl'); if(!c){$('crlRes').textContent='Введите КТР';return}
+  const days=8.052*Math.sqrt(c*1.037)+23.73, ex=parseD('crlDate')||today();
+  const edd=new Date(ex.getTime()+(280-Math.round(days))*864e5);
+  let s=`Срок: <b>${ga(days)}</b><br>ПДР: <b>${fmtD(edd)}</b>`;
+  if(c<10||c>84)s+='<br><span class="warn">КТР вне диапазона формулы (10–84 мм)</span>';
+  $('crlRes').innerHTML=s;
+}
+function calcLMP(){
+  const l=parseD('lmp'); if(!l){$('lmpRes').textContent='Укажите дату';return}
+  const ex=parseD('lmpDate')||today(), days=(ex-l)/864e5, edd=new Date(l.getTime()+280*864e5);
+  $('lmpRes').innerHTML=days<0?'<span class="warn">Дата исследования раньше ДПМ</span>':`Срок на дату исследования: <b>${ga(days)}</b><br>ПДР: <b>${fmtD(edd)}</b>`;
+}
+
+// нормы
+const NORMS=[
+['Печень','Правая доля, КВР','до 150 мм'],
+['Печень','Правая доля, ПЗР','до 125 мм'],
+['Печень','Левая доля, толщина','до 50–60 мм'],
+['Печень','Хвостатая доля / правая доля','&lt; 0,65 (индекс)'],
+['Воротная вена','Диаметр','до 13 мм'],
+['Печёночные вены','Диаметр','до 10 мм'],
+['Холедох','Диаметр','до 6 мм (после холецистэктомии и у пожилых — до 8–10 мм)'],
+['Желчный пузырь','Длина × ширина','до 100 × 40 мм'],
+['Желчный пузырь','Толщина стенки','до 3 мм'],
+['Поджелудочная железа','Головка / тело / хвост','до 32 / 21 / 30 мм'],
+['Поджелудочная железа','Вирсунгов проток','до 2–3 мм'],
+['Селезёнка','Длина × толщина','до 120 × 50 мм'],
+['Селезёночная вена','Диаметр','до 8–10 мм'],
+['Аорта брюшная','Диаметр','до 25 мм; ≥ 30 мм — аневризма'],
+['Почки','Длина × ширина','100–120 × 50–60 мм'],
+['Почки','Толщина паренхимы','15–25 мм'],
+['Почки','Разница длины','до 15–20 мм'],
+['Почечные артерии','Индекс резистентности (ИР)','0,56–0,70'],
+['Надпочечник','Ножка','до 5–6 мм'],
+['Мочевой пузырь','Толщина стенки (наполненный)','до 3 мм'],
+['Мочевой пузырь','Остаточная моча','до 50 мл / &lt; 10%'],
+['Щитовидная железа','Объём (жен. / муж.)','до 18 / 25 мл'],
+['Щитовидная железа','Перешеек, толщина','до 4–5 мм'],
+['Матка (репрод.)','Длина × ПЗР × ширина','45–70 × 30–45 × 45–60 мм'],
+['Эндометрий','Постменопауза (без ЗГТ)','до 4–5 мм'],
+['Яичник','Объём (репрод. / постменопауза)','до 10 / 5 мл'],
+['Простата','Объём','до 25–30 см³'],
+['Яичко','Длина × ширина × толщина','35–50 × 20–30 × 20–25 мм'],
+['Яичко','Объём','12–25 мл'],
+['Лимфоузел','Индекс Солбиати (Д/П)','&gt; 2 — овальная форма (норма)'],
+['Общая сонная артерия','КИМ','до 0,9 мм; ≥ 1,5 мм — бляшка'],
+];
+function renderNorms(){
+  const q=$('nSearch').value.trim().toLowerCase();
+  const rows=NORMS.filter(r=>!q||r.join(' ').toLowerCase().includes(q));
+  $('nTable').innerHTML='<tr><th>Орган</th><th>Параметр</th><th>Норма</th></tr>'+
+    (rows.length?rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join(''):'<tr><td colspan="3">Ничего не найдено</td></tr>');
+}
+
+// шаблоны
+const TPL={
+'Органы брюшной полости':`УЛЬТРАЗВУКОВОЕ ИССЛЕДОВАНИЕ ОРГАНОВ БРЮШНОЙ ПОЛОСТИ
+
+ПЕЧЕНЬ: не увеличена. Правая доля КВР ___ мм, левая доля ___ мм. Контуры ровные, чёткие. Капсула не утолщена. Паренхима однородная, эхогенность обычная. Сосудистый рисунок не изменён. Очаговых образований не выявлено.
+Воротная вена ___ мм. Печёночные вены не расширены.
+Внутрипечёночные желчные протоки не расширены. Холедох ___ мм.
+
+ЖЕЛЧНЫЙ ПУЗЫРЬ: размеры ___ × ___ мм, форма обычная. Стенка ___ мм, не утолщена. Содержимое однородное, конкрементов нет.
+
+ПОДЖЕЛУДОЧНАЯ ЖЕЛЕЗА: головка ___ мм, тело ___ мм, хвост ___ мм. Контуры ровные. Паренхима однородная, эхогенность обычная. Вирсунгов проток не расширен.
+
+СЕЛЕЗЁНКА: ___ × ___ мм, не увеличена. Паренхима однородная. Селезёночная вена ___ мм.
+
+Свободной жидкости в брюшной полости не выявлено.
+
+ЗАКЛЮЧЕНИЕ: Эхографических признаков патологии органов брюшной полости не выявлено.`,
+'Почки и мочевой пузырь':`УЛЬТРАЗВУКОВОЕ ИССЛЕДОВАНИЕ ПОЧЕК И МОЧЕВОГО ПУЗЫРЯ
+
+ПРАВАЯ ПОЧКА: расположена типично, подвижность сохранена. Размеры ___ × ___ мм. Контуры ровные, чёткие. Паренхима ___ мм, кортико-медуллярная дифференциация сохранена. ЧЛС не расширена. Конкрементов не выявлено.
+
+ЛЕВАЯ ПОЧКА: расположена типично, подвижность сохранена. Размеры ___ × ___ мм. Контуры ровные, чёткие. Паренхима ___ мм, кортико-медуллярная дифференциация сохранена. ЧЛС не расширена. Конкрементов не выявлено.
+
+При ЦДК кровоток прослеживается до капсулы с обеих сторон.
+
+НАДПОЧЕЧНИКОВЫЕ ОБЛАСТИ: без особенностей.
+
+МОЧЕВОЙ ПУЗЫРЬ: наполнен достаточно, объём ___ мл. Стенка ___ мм, ровная. Содержимое однородное. Остаточная моча ___ мл.
+
+ЗАКЛЮЧЕНИЕ: Эхографических признаков патологии почек и мочевого пузыря не выявлено.`,
+'Щитовидная железа':`УЛЬТРАЗВУКОВОЕ ИССЛЕДОВАНИЕ ЩИТОВИДНОЙ ЖЕЛЕЗЫ
+
+Расположена типично. Контуры ровные, чёткие. Капсула не утолщена.
+Правая доля: ___ × ___ × ___ мм, объём ___ мл.
+Левая доля: ___ × ___ × ___ мм, объём ___ мл.
+Перешеек: ___ мм.
+Общий объём: ___ мл (норма для ___ — до ___ мл).
+
+Паренхима однородная, эхогенность обычная. Очаговых образований не выявлено.
+При ЦДК васкуляризация не усилена.
+Регионарные лимфатические узлы шеи не увеличены, структура сохранена.
+
+ЗАКЛЮЧЕНИЕ: Эхографических признаков патологии щитовидной железы не выявлено.`,
+'Органы малого таза (ТВ)':`УЛЬТРАЗВУКОВОЕ ИССЛЕДОВАНИЕ ОРГАНОВ МАЛОГО ТАЗА (трансвагинально)
+
+День менструального цикла: ___. ДПМ: ___.
+
+МАТКА: положение ___. Размеры: длина ___ мм, ПЗР ___ мм, ширина ___ мм. Контуры ровные. Миометрий однородный.
+Эндометрий: ___ мм, структура соответствует фазе цикла. Полость матки не деформирована.
+Шейка матки: ___ × ___ мм, структура не изменена. Цервикальный канал не расширен.
+
+ПРАВЫЙ ЯИЧНИК: ___ × ___ × ___ мм, объём ___ мл. Фолликулярный аппарат сохранён, фолликулы до ___ мм.
+ЛЕВЫЙ ЯИЧНИК: ___ × ___ × ___ мм, объём ___ мл. Фолликулярный аппарат сохранён, фолликулы до ___ мм.
+
+Свободной жидкости в позадиматочном пространстве не выявлено.
+
+ЗАКЛЮЧЕНИЕ: Эхографических признаков патологии органов малого таза не выявлено.`,
+'Предстательная железа':`УЛЬТРАЗВУКОВОЕ ИССЛЕДОВАНИЕ ПРЕДСТАТЕЛЬНОЙ ЖЕЛЕЗЫ
+
+Доступ: ___.
+Размеры: ___ × ___ × ___ мм. Объём: ___ см³.
+Форма симметричная. Контуры ровные, чёткие. Капсула не изменена.
+Паренхима однородная, эхогенность обычная. Очаговых изменений не выявлено.
+Семенные пузырьки не расширены, симметричны.
+
+МОЧЕВОЙ ПУЗЫРЬ: объём ___ мл, стенка ___ мм. Остаточная моча ___ мл.
+
+ЗАКЛЮЧЕНИЕ: Эхографических признаков патологии предстательной железы не выявлено.`
+};
+Object.keys(TPL).forEach(k=>$('tplSel').insertAdjacentHTML('beforeend',`<option>${k}</option>`));
+const loadTpl=()=>$('tplText').value=TPL[$('tplSel').value];
+$('tplSel').onchange=loadTpl; $('resetBtn').onclick=loadTpl;
+$('copyBtn').onclick=async()=>{
+  const t=$('tplText');
+  try{await navigator.clipboard.writeText(t.value)}catch(e){t.select();document.execCommand('copy')}
+  const b=$('copyBtn');b.textContent='Скопировано ✓';setTimeout(()=>b.textContent='Копировать',1500);
+};
+
+function recalc(){calcThy();calcPr();calcB();calcO();calcE();calcT();calcCRL();calcLMP()}
+document.addEventListener('input',e=>{if(e.target.id==='nSearch')renderNorms();else if(e.target.id!=='tplText')recalc()});
+document.addEventListener('change',e=>{if(e.target.tagName!=='TEXTAREA')recalc()});
+$('crlDate').value=$('lmpDate').value=toInput(today());
+renderNorms();loadTpl();recalc();
+</script>
+</body>
+</html>
