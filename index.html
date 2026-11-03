@@ -4,6 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Помощник врача УЗИ</title>
+<meta name="theme-color" content="#0a7b83">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Помощник УЗИ">
 <meta name="description" content="Калькуляторы, нормы и шаблоны протоколов для врача ультразвуковой диагностики">
 <style>
 :root{--bg:#f4f7fa;--card:#fff;--text:#1b2733;--muted:#5d6b78;--line:#dde4ea;--accent:#0a7b83;--accent-soft:#e3f3f4;--ok:#1e8e3e;--warn:#c77700;--bad:#c62828}
@@ -14,6 +21,10 @@ body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-ap
 header{background:var(--accent);color:#fff;padding:18px 16px 14px}
 header h1{margin:0;font-size:21px}
 header p{margin:2px 0 0;opacity:.85;font-size:13px}
+header{position:relative}
+#instBtn{display:none;position:absolute;right:16px;top:16px;background:#fff;color:var(--accent);border:none;border-radius:18px;padding:7px 12px;font:600 13px/1 system-ui,sans-serif;cursor:pointer}
+#offBadge{display:none;font-size:12px;background:rgba(255,255,255,.2);border-radius:10px;padding:2px 8px;margin-left:6px}
+#iosHint{display:none;background:var(--accent-soft);color:var(--text);font-size:13px;padding:10px 16px;border-bottom:1px solid var(--line)}
 nav{display:flex;gap:6px;padding:10px 16px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5;overflow-x:auto}
 nav button{flex:none;border:1px solid var(--line);background:transparent;color:var(--text);padding:8px 14px;border-radius:20px;font-size:14px;cursor:pointer}
 nav button.active{background:var(--accent);border-color:var(--accent);color:#fff}
@@ -59,9 +70,11 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px 16px 30p
 </head>
 <body>
 <header>
-  <h1>Помощник врача УЗИ</h1>
+  <h1>Помощник врача УЗИ<span id="offBadge">офлайн</span></h1>
+  <button id="instBtn">Установить</button>
   <p>Калькуляторы · генератор заключений · нормы · шаблоны</p>
 </header>
+<div id="iosHint">Чтобы установить на iPhone: кнопка «Поделиться» <b>⎋</b> → «На экран „Домой“». <a href="#" id="iosClose">Скрыть</a></div>
 <nav>
   <button class="active" data-tab="calc">Калькуляторы</button>
   <button data-tab="gen">Заключение</button>
@@ -837,6 +850,19 @@ document.addEventListener('input',e=>{if(e.target.id==='nSearch')renderNorms();e
 document.addEventListener('change',e=>{if(e.target.tagName!=='TEXTAREA')recalc()});
 $('crlDate').value=$('lmpDate').value=toInput(today());
 renderNorms();loadTpl();recalc();
+
+// ===== PWA: офлайн и установка =====
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+let instEvt=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();instEvt=e;$('instBtn').style.display='block'});
+$('instBtn').onclick=async()=>{if(!instEvt)return;instEvt.prompt();await instEvt.userChoice;instEvt=null;$('instBtn').style.display='none'};
+window.addEventListener('appinstalled',()=>$('instBtn').style.display='none');
+const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+let iosHid=false;try{iosHid=localStorage.getItem('iosHintHidden')==='1'}catch(e){}
+if(/iphone|ipad|ipod/i.test(navigator.userAgent)&&!standalone&&!iosHid)$('iosHint').style.display='block';
+$('iosClose').onclick=e=>{e.preventDefault();$('iosHint').style.display='none';try{localStorage.setItem('iosHintHidden','1')}catch(e){}};
+const netBadge=()=>$('offBadge').style.display=navigator.onLine?'none':'inline-block';
+addEventListener('online',netBadge);addEventListener('offline',netBadge);netBadge();
 </script>
 </body>
 </html>
