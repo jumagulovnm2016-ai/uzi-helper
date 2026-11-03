@@ -388,6 +388,17 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px 16px 30p
     <div class="res" id="ivfRes">Укажите дату</div>
     <div class="note">ПДР = дата переноса + 266 − возраст эмбриона (сут.); срок = дни от переноса + возраст эмбриона + 14 (ACOG 2017). Подходит и для криопереноса. Срок при ЭКО по УЗИ не пересчитывают.</div>
   </div>
+  <div class="card">
+    <h3>Фетометрия и ПМП (Hadlock)</h3>
+    <div class="sub">Биометрия, мм</div>
+    <div class="row2"><input id="hBPD" inputmode="decimal" placeholder="БПР"><input id="hHC" inputmode="decimal" placeholder="ОГ"></div>
+    <div class="row2"><input id="hAC" inputmode="decimal" placeholder="ОЖ"><input id="hFL" inputmode="decimal" placeholder="ДБ"></div>
+    <div class="sub">Установленный срок (по раннему УЗИ / ДПМ / ЭКО)</div>
+    <div class="row2"><input id="hW" inputmode="numeric" placeholder="недель"><input id="hD" inputmode="numeric" placeholder="дней (0–6)"></div>
+    <div class="res" id="hRes">Введите размеры</div>
+    <div class="bar"><button class="btn sec" id="hCopy">Копировать в протокол</button></div>
+    <div class="note">Срок — Hadlock 1984; ПМП — Hadlock 1985 (по доступным параметрам); перцентиль ПМП — Hadlock 1991 (Radiology 181:129), интерполяция между неделями, 10–40 нед. Перцентиль считается только от установленного срока, не от срока по фетометрии. ЗРП — консенсус Delphi (Gordijn 2016, ISUOG 2020): кроме ПМП учитываются ОЖ, допплерометрия и динамика.</div>
+  </div>
 </div>
 </section>
 
@@ -522,6 +533,65 @@ function calcIVF(){
   if(diff<0){$('ivfRes').innerHTML='<span class="warn">Дата исследования раньше даты события</span>';return}
   $('ivfRes').innerHTML=gaOut(diff+age+14,ex);
 }
+// ===== Hadlock =====
+// Hadlock 1991, Table 1: недели 10–40 → [3, 10, 50, 90, 97 перцентиль], г.
+// 30 нед., 97-й: в скане 1649 (ошибка распознавания, меньше 90-го); по соотношению соседних недель (97/50 = 1,25) — 1949.
+const HW={10:[26,29,35,41,44],11:[34,37,45,53,56],12:[43,48,58,68,73],13:[55,61,73,85,91],14:[70,77,93,109,116],15:[88,97,117,137,146],16:[110,121,146,171,183],17:[136,150,181,212,226],18:[167,185,223,261,279],19:[205,227,273,319,341],20:[248,275,331,387,414],21:[299,331,399,467,499],22:[359,398,478,559,598],23:[426,471,568,665,710],24:[503,556,670,784,838],25:[589,652,785,918,981],26:[685,758,913,1068,1141],27:[791,876,1055,1234,1319],28:[908,1004,1210,1416,1513],29:[1034,1145,1379,1613,1724],30:[1169,1294,1559,1824,1949],31:[1313,1453,1751,2049,2189],32:[1465,1621,1953,2285,2441],33:[1622,1794,2162,2530,2703],34:[1783,1973,2377,2781,2971],35:[1946,2154,2595,3036,3244],36:[2110,2335,2813,3291,3516],37:[2271,2513,3028,3543,3785],38:[2427,2686,3236,3786,4045],39:[2576,2851,3435,4019,4294],40:[2714,3004,3619,4234,4524]};
+function hwAt(gaW){if(gaW<10||gaW>40)return null;const a=Math.floor(gaW),b=Math.min(a+1,40),t=gaW-a;return HW[a].map((x,i)=>x+(HW[b][i]-x)*t)}
+function ncdf(z){const t=1/(1+0.2316419*Math.abs(z)),d=0.3989423*Math.exp(-z*z/2),p=d*t*(0.3193815+t*(-0.3565638+t*(1.781478+t*(-1.821256+t*1.330274))));return z>0?1-p:p}
+function hadlockEFW(b,h,a,fl){ // см
+  if(a&&fl&&h&&b)return [1.3596-0.00386*a*fl+0.0064*h+0.00061*b*a+0.0424*a+0.174*fl,'БПР, ОГ, ОЖ, ДБ'];
+  if(a&&fl&&h)return [1.326-0.00326*a*fl+0.0107*h+0.0438*a+0.158*fl,'ОГ, ОЖ, ДБ'];
+  if(a&&fl&&b)return [1.335-0.0034*a*fl+0.0316*b+0.0457*a+0.1623*fl,'БПР, ОЖ, ДБ'];
+  if(a&&fl)return [1.304+0.05281*a+0.1938*fl-0.004*a*fl,'ОЖ, ДБ'];
+  return null;
+}
+function hadlockGA(b,h,a,fl){ // см → недели
+  const one={'БПР':b&&9.54+1.482*b+0.1676*b*b,'ОГ':h&&8.96+0.540*h+0.0003*h*h*h,'ОЖ':a&&8.14+0.753*a+0.0036*a*a,'ДБ':fl&&10.35+2.460*fl+0.170*fl*fl};
+  let comb=null;
+  if(b&&h&&a&&fl)comb=10.85+0.060*h*fl+0.6700*b+0.1680*a;
+  else if(h&&a&&fl)comb=10.33+0.031*h*fl+0.3610*h+0.0298*a*fl;
+  else if(b&&a&&fl)comb=10.61+0.175*b*fl+0.2970*a+0.7100*fl;
+  else if(h&&b&&fl)comb=11.38+0.070*h*fl+0.9800*b;
+  else if(h&&a&&b)comb=10.58+0.005*h*h+0.3635*a+0.02864*b*a;
+  return {one,comb};
+}
+const gaWD=w=>`${Math.floor(w)} нед. ${Math.min(6,Math.round((w%1)*7))} дн.`;
+let hText='';
+function calcH(){
+  const mm=id=>{const v=num(id);return v?v/10:null};
+  const b=mm('hBPD'),h=mm('hHC'),a=mm('hAC'),fl=mm('hFL');
+  if(!b&&!h&&!a&&!fl){$('hRes').textContent='Введите размеры';hText='';return}
+  const {one,comb}=hadlockGA(b,h,a,fl);
+  let s='<b>Срок по фетометрии:</b><br>'+Object.entries(one).filter(([k,v])=>v).map(([k,v])=>`${k}: ${gaWD(v)}`).join('; ');
+  if(comb)s+=`<br>Сводный: <b>${gaWD(comb)}</b>`;
+  const w=parseInt($('hW').value),dd=parseInt($('hD').value)||0, est=w>=0?w+dd/7:null;
+  const parts=[`Фетометрия: ${[['БПР','hBPD'],['ОГ','hHC'],['ОЖ','hAC'],['ДБ','hFL']].filter(([k,id])=>num(id)).map(([k,id])=>`${k} ${fm(num(id))} мм`).join(', ')}.`];
+  if(comb)parts.push(`Срок по фетометрии (Hadlock): ${gaWD(comb)}${est!=null?`, по установленному сроку — ${w} нед. ${dd} дн.`:''}`+(est!=null?'':'.'));
+  const e=hadlockEFW(b,h,a,fl);
+  if(e){const efw=Math.pow(10,e[0]);
+    s+=`<br><br>ПМП: <b>${Math.round(efw)} г</b> (Hadlock: ${e[1]})`;
+    let pt='';
+    if(est==null)s+='<br><span class="warn">Укажите установленный срок для перцентиля</span>';
+    else{const p=hwAt(est);
+      if(!p)s+='<br><span class="warn">Перцентиль доступен для 10–40 нед.</span>';
+      else{const sd=(p[3]-p[1])/(2*1.2816),c=ncdf((efw-p[2])/sd)*100;
+        let band,cls;
+        if(efw<p[0]){band='< 3-го перцентиля';cls='bad'}else if(efw<p[1]){band='3–10-й перцентиль';cls='warn'}
+        else if(efw<=p[3]){band='10–90-й перцентиль';cls='ok'}else if(efw<=p[4]){band='90–97-й перцентиль';cls='warn'}else{band='> 97-го перцентиля';cls='warn'}
+        const cc=c<1?'< 1':c>99?'> 99':'≈ '+Math.round(c);
+        s+=`<br>Перцентиль: <span class="${cls}">${cc} (${band})</span><br><span class="note" style="margin:0">Норма на ${w} нед. ${dd} дн.: 10-й ${Math.round(p[1])} г · 50-й ${Math.round(p[2])} г · 90-й ${Math.round(p[3])} г</span>`;
+        pt=`ПМП ${Math.round(efw)} г (Hadlock), ${cc} перцентиль по Hadlock 1991 (${band}).`;
+        if(efw<p[0])s+=`<br><span class="bad">ПМП < 3-го перцентиля — изолированный критерий ЗРП (Delphi)</span>`;
+        else if(efw<p[1])s+=`<br><span class="warn">МГВ: для ЗРП по Delphi нужны доп. критерии — ${est<32?'ПИ маточных артерий > 95 и/или ПИ артерии пуповины > 95-го перцентиля':'ЦПО < 5-го или ПИ артерии пуповины > 95-го перцентиля, снижение перцентиля более чем на 2 квартиля'}</span>`;
+        else if(efw>p[3])s+='<br><span class="warn">Крупный для срока плод (> 90-го перцентиля)</span>';
+      }}
+    parts.push(pt||`ПМП ${Math.round(efw)} г (Hadlock).`);
+  }else s+='<br><br><span class="note" style="margin:0">Для ПМП нужны минимум ОЖ и ДБ</span>';
+  hText=parts.join('\n');
+  $('hRes').innerHTML=s;
+}
+$('hCopy').onclick=async()=>{try{await navigator.clipboard.writeText(hText)}catch(e){}const x=$('hCopy');x.textContent='Скопировано ✓';setTimeout(()=>x.textContent='Копировать в протокол',1500)};
 
 // нормы
 const NORMS=[
@@ -1035,7 +1105,7 @@ $('bCopy').onclick=async()=>{const t=$('bTxt');try{await navigator.clipboard.wri
  const b=$('bCopy');b.textContent='Скопировано ✓';setTimeout(()=>b.textContent='Копировать',1500)};
 calcBR();
 
-function recalc(){calcThy();calcPr();calcB();calcO();calcE();calcT();calcCRL();calcLMP();calcPU();calcIVF()}
+function recalc(){calcThy();calcPr();calcB();calcO();calcE();calcT();calcCRL();calcLMP();calcPU();calcIVF();calcH()}
 document.addEventListener('input',e=>{if(e.target.id==='nSearch')renderNorms();else if(e.target.id!=='tplText')recalc()});
 document.addEventListener('change',e=>{if(e.target.tagName!=='TEXTAREA')recalc()});
 $('crlDate').value=$('lmpDate').value=$('puNow').value=$('ivfNow').value=toInput(today());
