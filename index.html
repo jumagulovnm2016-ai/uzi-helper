@@ -66,6 +66,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px 16px 30p
   <button class="active" data-tab="calc">Калькуляторы</button>
   <button data-tab="gen">Заключение</button>
   <button data-tab="tirads">TI-RADS</button>
+  <button data-tab="orads">O-RADS</button>
   <button data-tab="ob">Акушерство</button>
   <button data-tab="norms">Нормы</button>
   <button data-tab="tpl">Шаблоны</button>
@@ -191,6 +192,74 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px 16px 30p
     </table>
     </div>
     <div class="note">Решение о ТАБ принимается с учётом клиники и анамнеза. Калькулятор — вспомогательный инструмент.</div>
+  </div>
+</div>
+</section>
+
+<!-- O-RADS -->
+<section class="tab" id="orads">
+<div class="grid">
+  <div class="card">
+    <h3>O-RADS US (ACR, v2022)</h3>
+    <div class="row2">
+      <div><label for="oMeno">Статус</label><select id="oMeno"><option value="0">Пременопауза</option><option value="1">Постменопауза</option></select></div>
+      <div><label for="oSide">Сторона</label><select id="oSide"><option value="0">правый яичник</option><option value="1">левый яичник</option><option value="2">придатки справа</option><option value="3">придатки слева</option></select></div>
+    </div>
+    <label for="oType">Тип образования</label>
+    <select id="oType">
+      <optgroup label="Норма">
+        <option value="0">Нормальный яичник / фолликул / жёлтое тело</option>
+      </optgroup>
+      <optgroup label="Кисты без солидного компонента">
+        <option value="1">Простая киста</option>
+        <option value="2">Однокамерная гладкая непростая (взвесь, сгусток)</option>
+        <option value="3">Двухкамерная с гладкой стенкой</option>
+        <option value="10">Однокамерная с неровной внутренней стенкой</option>
+        <option value="11">Двухкамерная с неровной стенкой / перегородкой</option>
+        <option value="12">Многокамерная (≥ 3 камер)</option>
+      </optgroup>
+      <optgroup label="Типичные доброкачественные">
+        <option value="4">Геморрагическая киста</option>
+        <option value="5">Дермоидная киста</option>
+        <option value="6">Эндометриома</option>
+        <option value="7">Параовариальная киста</option>
+        <option value="8">Перитонеальная псевдокиста</option>
+        <option value="9">Гидросальпинкс</option>
+      </optgroup>
+      <optgroup label="С солидным компонентом / солидные">
+        <option value="13">Однокамерная киста с солидным компонентом</option>
+        <option value="14">Двух-/многокамерная с солидным компонентом</option>
+        <option value="15">Солидное образование (≥ 80% солидное)</option>
+      </optgroup>
+      <optgroup label="Прочее">
+        <option value="16">Асцит и/или узлы по брюшине</option>
+      </optgroup>
+    </select>
+    <div class="gg" style="margin-top:8px">
+      <div id="oF_size"><label for="oSize">Макс. размер, мм</label><input id="oSize" inputmode="decimal" placeholder="напр. 45"></div>
+      <div id="oF_cs"><label for="oCS">Цветовая шкала (CS)</label><select id="oCS"><option value="1">CS1 — нет кровотока</option><option value="2">CS2 — минимальный</option><option value="3">CS3 — умеренный</option><option value="4">CS4 — выраженный</option></select></div>
+      <div id="oF_wall"><label for="oWall">Внутренняя стенка / перегородки</label><select id="oWall"><option value="0">гладкие</option><option value="1">неровные (&lt; 3 мм)</option></select></div>
+      <div id="oF_pp"><label for="oPP">Солидный компонент</label><select id="oPP"><option value="0">1–3 папиллярных разрастания</option><option value="2">солидный компонент (не папиллярный)</option><option value="1">≥ 4 папиллярных разрастаний</option></select></div>
+      <div id="oF_cont"><label for="oCont">Наружный контур</label><select id="oCont"><option value="0">ровный</option><option value="1">неровный</option></select></div>
+      <div id="oF_sh"><label for="oSh">Акустическая тень</label><select id="oSh"><option value="0">нет</option><option value="1">есть</option></select></div>
+    </div>
+    <div class="note">Постменопауза — аменорея ≥ 1 года (при неясности или после гистерэктомии — возраст &gt; 50 лет). Оценка по наибольшему размеру, каждое образование отдельно. Не применяется при ВЗОМТ, внематочной беременности и перекруте.</div>
+  </div>
+  <div class="card">
+    <h3>Результат</h3>
+    <div class="res" id="oRes2" style="font-size:15px"></div>
+    <div class="sub" style="margin-top:12px">Фраза для протокола</div>
+    <textarea id="oTxt" style="min-height:110px;font-family:inherit;font-size:14px"></textarea>
+    <div class="bar"><button class="btn" id="oCopy">Копировать</button></div>
+    <div class="tablewrap" style="margin-top:6px"><table>
+      <tr><th>O-RADS</th><th>Риск</th><th>Тактика</th></tr>
+      <tr><td>1</td><td>норма</td><td>не требуется</td></tr>
+      <tr><td>2</td><td>&lt; 1%</td><td>по типу и размеру (см. результат)</td></tr>
+      <tr><td>3</td><td>1–&lt;10%</td><td>УЗИ через 6 мес или удаление; солидные — эксперт УЗИ/МРТ</td></tr>
+      <tr><td>4</td><td>10–&lt;50%</td><td>эксперт УЗИ или МРТ; гинеколог + онкогинеколог</td></tr>
+      <tr><td>5</td><td>≥ 50%</td><td>онкогинеколог</td></tr>
+    </table></div>
+    <div class="note">ACR O-RADS US Risk Stratification and Management System v2022. Тактика может быть изменена с учётом клиники.</div>
   </div>
 </div>
 </section>
@@ -596,7 +665,8 @@ gen(F,K){
 'Органы малого таза (ТВ)':{
 form:()=>B('Анамнез',N('m_dmc','День цикла')+C('m_meno','Постменопауза'))
  +B('Матка',N('m_l','Длина, мм','45–70')+N('m_ap','ПЗР, мм','30–45')+N('m_w','Ширина, мм','45–60')+N('m_en','Эндометрий, мм')+C('m_my','Миома')+N('m_myn','Число узлов')+N('m_mys','Наиб. узел, мм')+S('m_myt','Тип наиб. узла',['интрамуральный','субсерозный','субмукозный'])+C('m_ad','Признаки аденомиоза'))
- +['r','l'].map(s=>B(s==='r'?'Правый яичник':'Левый яичник',N(`o${s}1`,'Д, мм')+N(`o${s}2`,'Ш, мм')+N(`o${s}3`,'Т, мм')+N(`o${s}f`,'Число фолликулов')+S(`o${s}x`,'Находка',['без особенностей','доминантный фолликул','жёлтое тело','фолликулярная киста','образование (O-RADS)'])+N(`o${s}s`,'Размер находки, мм'))).join('')
+ +['r','l'].map(s=>B(s==='r'?'Правый яичник':'Левый яичник',N(`o${s}1`,'Д, мм')+N(`o${s}2`,'Ш, мм')+N(`o${s}3`,'Т, мм')+N(`o${s}f`,'Число фолликулов')+S(`o${s}x`,'Находка',['без особенностей','доминантный фолликул','жёлтое тело','фолликулярная киста','образование (O-RADS)'])+N(`o${s}s`,'Размер находки, мм')+S(`o${s}o`,'O-RADS (если образование)',['—','2','3','4','5']))).join('')
+ +'<div class="note">Категорию O-RADS можно определить на вкладке O-RADS.</div>'
  +B('Прочее',S('m_fl','Свободная жидкость',['нет','незначительное количество','умеренное / значительное количество'])),
 gen(F,K){
  const meno=gchk('m_meno'),dmc=gnum('m_dmc');
@@ -617,13 +687,15 @@ gen(F,K){
   const a=gnum(`o${s}1`),b=gnum(`o${s}2`),c=gnum(`o${s}3`),v=vol3(a,b,c,0.523),fc=gnum(`o${s}f`),x=gsel(`o${s}x`),xs=gnum(`o${s}s`);
   d+=`${nm}: ${fm(a)} × ${fm(b)} × ${fm(c)} мм, объём ${v?f(v):'___'} мл. `;
   d+=meno?'Фолликулы не визуализируются.':`Фолликулярный аппарат сохранён${fc?`, фолликулов ${fm(fc)}`:''}.`;
-  d+=['',` Доминантный фолликул ${fm(xs)} мм.`,` Жёлтое тело ${fm(xs)} мм.`,` Анэхогенное тонкостенное образование ${fm(xs)} мм, без внутренних структур и кровотока.`,` Образование ${fm(xs)} мм: ___ (описание по O-RADS).`][x]+'\n';
+  d+=['',` Доминантный фолликул ${fm(xs)} мм.`,` Жёлтое тело ${fm(xs)} мм.`,` Анэхогенное тонкостенное образование ${fm(xs)} мм, без внутренних структур и кровотока.`,` Образование ${fm(xs)} мм: ___ (описание по O-RADS лексикону).`][x]+'\n';
   if(v&&v>ovLim)F.w(`Объём ${G} ${f(v)} мл (> ${ovLim})`);
   if(!meno&&((v&&v>=10)||fc>=20))K.push(`Мультифолликулярная структура ${G} (${v&&v>=10?`объём ${f(v)} мл`:''}${v&&v>=10&&fc>=20?', ':''}${fc>=20?`фолликулов ${fm(fc)}`:''}) — соответствует критерию PCOM; оценивать в сочетании с клиникой и гормональным профилем.`);
   if(!meno&&((v&&v>=10)||fc>=20))F.w(`PCOM ${G}`);
   if(meno&&v&&v>5)K.push(`Увеличение объёма ${G} в постменопаузе (${f(v)} мл).`);
   if(x===3){K.push(`Фолликулярная киста ${G} ${fm(xs)} мм — контроль через 6–8 недель (после менструации).`);F.w(`Киста ${G}`)}
-  if(x===4){K.push(`Образование ${G} ${fm(xs)} мм — требуется стратификация по O-RADS US, консультация гинеколога.`);F.b(`Образование ${G}`)}
+  if(x===4){const oc=gsel(`o${s}o`)?gsel(`o${s}o`)+1:0;
+   if(!oc){K.push(`Образование ${G} ${fm(xs)} мм — требуется стратификация по O-RADS US, консультация гинеколога.`);F.b(`Образование ${G}: укажите O-RADS`)}
+   else{K.push(`Образование ${G} ${fm(xs)} мм, O-RADS US ${oc} — ${ORISK[oc].replace('&lt;','<')}. Рекомендовано: ${oc===2?'тактика по типу образования (см. O-RADS)':OREC[oc]}.`);oc>=4?F.b(`Образование ${G}: O-RADS ${oc}`):F.w(`Образование ${G}: O-RADS ${oc}`)}}
  });
  const fl=gsel('m_fl');
  d+=['\nСвободной жидкости в позадиматочном пространстве не выявлено.','\nВ позадиматочном пространстве — незначительное количество свободной жидкости.','\nВ позадиматочном пространстве определяется свободная жидкость в количестве ___.'][fl];
@@ -680,6 +752,65 @@ $('gClear').onclick=()=>{$('gExtraD').value=$('gExtraC').value='';buildGenForm()
 $('gCopy').onclick=async()=>{const t=$('genOut');try{await navigator.clipboard.writeText(t.value)}catch(e){t.select();document.execCommand('copy')}
  const b=$('gCopy');b.textContent='Скопировано ✓';setTimeout(()=>b.textContent='Копировать',1500)};
 buildGenForm();
+
+// ===== O-RADS =====
+const ORISK={1:'норма',2:'практически наверняка доброкачественное (&lt; 1%)',3:'низкий риск (1–&lt;10%)',4:'промежуточный риск (10–&lt;50%)',5:'высокий риск (≥ 50%)'};
+const OREC={3:'если не удалено — УЗИ через 6 месяцев; для солидных образований — экспертное УЗИ или МРТ; ведение гинекологом',
+ 4:'экспертное УЗИ или МРТ; ведение гинекологом с участием онкогинеколога либо онкогинекологом',
+ 5:'направление к онкогинекологу'};
+const OTYPE={0:'',1:'простая киста',2:'однокамерная гладкостенная киста с непростым содержимым',3:'двухкамерная киста с гладкой стенкой',4:'геморрагическая киста (типичная)',5:'дермоидная киста (типичная)',6:'эндометриома (типичная)',7:'параовариальная киста (типичная)',8:'перитонеальная псевдокиста (типичная)',9:'гидросальпинкс (типичный)',10:'однокамерная киста с неровной внутренней стенкой',11:'двухкамерная киста с неровной стенкой/перегородкой',12:'многокамерная киста',13:'однокамерная киста с солидным компонентом',14:'многокамерная киста с солидным компонентом',15:'солидное образование',16:'асцит и/или узлы по брюшине'};
+function orads(t,meno,sz,cs,wall,pp,cont,sh){
+ const big=sz!=null&&sz>=100;
+ const R=(c,r)=>({c,r:r||OREC[c]||''});
+ switch(t){
+ case 0:return R(1,'не требуется'+(sz>30?'. Фолликул/жёлтое тело > 3 см описывается как киста — выберите соответствующий тип':'')+(meno?'. В постменопаузе фолликулы и жёлтое тело не характерны':''));
+ case 1:if(big)return R(3);if(sz==null)return R(2,'зависит от размера — укажите размер');
+  if(sz<=30)return meno?R(2,'наблюдение не требуется'):R(1,'не требуется (физиологический фолликул)');
+  if(sz<=50)return R(2,meno?'контрольное УЗИ через 12 месяцев':'наблюдение не требуется');
+  return R(2,'контрольное УЗИ через 12 месяцев');
+ case 2:case 3:if(big)return R(3);if(sz==null)return R(2,'зависит от размера — укажите размер');
+  if(sz<=30)return R(2,meno?'контрольное УЗИ через 12 месяцев':'наблюдение не требуется');
+  return R(2,'контрольное УЗИ через 6 месяцев');
+ case 4:if(big)return R(3);if(meno)return R(2,'в постменопаузе нетипична: УЗИ через 2–3 месяца, экспертное УЗИ или МРТ; консультация гинеколога');
+  if(sz==null)return R(2,'зависит от размера — укажите размер');
+  return R(2,sz<=50?'наблюдение не требуется':'контрольное УЗИ через 2–3 месяца');
+ case 5:if(big)return R(3);return R(2,sz!=null&&sz<=30?'можно рассмотреть контрольное УЗИ через 12 месяцев':'если не удалена — контрольное УЗИ через 12 месяцев; консультация гинеколога');
+ case 6:if(big)return R(3);return R(2,meno?'первичный контроль через 2–3 месяца, затем ежегодно, если не удалена; консультация гинеколога':'если не удалена — контрольное УЗИ через 12 месяцев; консультация гинеколога');
+ case 7:return R(2,'наблюдение не требуется');
+ case 8:return R(2,'визуализационное наблюдение не требуется; консультация гинеколога');
+ case 9:return R(2,'визуализационное наблюдение не требуется; консультация гинеколога по показаниям');
+ case 10:return R(3);
+ case 11:return R(4);
+ case 12:return (wall||cs===4||big)?R(4):R(3);
+ case 13:return pp===1?R(5):R(4);
+ case 14:return cs>=3?R(5):R(4);
+ case 15:if(cont||cs===4)return R(5);if(cs===1)return R(3);return sh?R(3):R(4);
+ case 16:return R(5);
+ }}
+const OSHOW={size:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],cs:[12,14,15],wall:[12],pp:[13],cont:[15],sh:[15]};
+function calcOR(){
+ const t=+$('oType').value,meno=+$('oMeno').value===1,sz=num('oSize'),cs=+$('oCS').value,wall=+$('oWall').value,pp=+$('oPP').value,cont=+$('oCont').value,sh=+$('oSh').value;
+ Object.entries(OSHOW).forEach(([k,a])=>$('oF_'+k).style.display=a.includes(t)?'':'none');
+ const {c,r}=orads(t,meno,sz,cs,wall,pp,cont,sh);
+ const cls=c<=2?'ok':c===3?'warn':'bad';
+ $('oRes2').innerHTML=`<span class="${cls}" style="font-size:17px">O-RADS US ${c}</span> — ${ORISK[c]}<br>Тактика: ${r}.`;
+ const SIDE=['правого яичника','левого яичника','в области придатков справа','в области придатков слева'][+$('oSide').value];
+ let tx;
+ if(t===0)tx='Яичник без патологических образований (O-RADS US 1).';
+ else if(t===16)tx='Асцит и/или узловые образования по брюшине — O-RADS US 5 (высокий риск). Рекомендовано: направление к онкогинекологу.';
+ else{
+  const det=[];if([12,14,15].includes(t))det.push(`CS${cs}`);if(t===12)det.push(wall?'неровные перегородки':'гладкие перегородки');
+  if(t===13)det.push(['1–3 папиллярных разрастания','≥ 4 папиллярных разрастаний','солидный компонент'][pp]);if(t===15)det.push(cont?'неровный контур':'ровный контур',sh?'с акустической тенью':'без акустической тени');
+  const pre=t>=7&&t<=9?`Образование в области придатков ${+$('oSide').value%2?'слева':'справа'}`:`Образование ${SIDE}`;
+  tx=`${pre}: ${OTYPE[t]}, ${sz!=null?fm(sz)+' мм':'___ мм'}${det.length?' ('+det.join(', ')+')':''}. O-RADS US ${c} — ${ORISK[c].replace('&lt;','<')}. Рекомендовано: ${r}.`;
+ }
+ $('oTxt').value=tx.replace(/&lt;/g,'<');
+}
+$('orads').addEventListener('input',e=>{if(e.target.id!=='oTxt')calcOR()});
+$('orads').addEventListener('change',e=>{if(e.target.id!=='oTxt')calcOR()});
+$('oCopy').onclick=async()=>{const t=$('oTxt');try{await navigator.clipboard.writeText(t.value)}catch(e){t.select();document.execCommand('copy')}
+ const b=$('oCopy');b.textContent='Скопировано ✓';setTimeout(()=>b.textContent='Копировать',1500)};
+calcOR();
 
 function recalc(){calcThy();calcPr();calcB();calcO();calcE();calcT();calcCRL();calcLMP()}
 document.addEventListener('input',e=>{if(e.target.id==='nSearch')renderNorms();else if(e.target.id!=='tplText')recalc()});
