@@ -80,6 +80,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px 16px 30p
   <button data-tab="gen">Заключение</button>
   <button data-tab="tirads">TI-RADS</button>
   <button data-tab="orads">O-RADS</button>
+  <button data-tab="birads">BI-RADS</button>
   <button data-tab="ob">Акушерство</button>
   <button data-tab="norms">Нормы</button>
   <button data-tab="tpl">Шаблоны</button>
@@ -274,6 +275,67 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px 16px 30p
       <tr><td>5</td><td>≥ 50%</td><td>онкогинеколог</td></tr>
     </table></div>
     <div class="note">ACR O-RADS US Risk Stratification and Management System v2022. Тактика может быть изменена с учётом клиники.</div>
+  </div>
+</div>
+</section>
+
+<!-- BI-RADS -->
+<section class="tab" id="birads">
+<div class="grid">
+  <div class="card">
+    <h3>BI-RADS — УЗИ молочных желёз (ACR, 5-е изд.)</h3>
+    <label for="bType">Находка</label>
+    <select id="bType">
+      <option value="norm">Без образований</option>
+      <option value="cyst">Простая киста</option>
+      <option value="ln">Внутримаммарный лимфоузел (типичный)</option>
+      <option value="ccyst">Осложнённая киста (взвесь, без солидного компонента)</option>
+      <option value="micro">Кластер микрокист</option>
+      <option value="solid" selected>Солидное образование</option>
+      <option value="complex">Кистозно-солидное (сложное) образование</option>
+      <option value="known">Верифицированный рак</option>
+    </select>
+    <div class="row2" style="margin-top:8px">
+      <div><label for="bSide">Железа</label><select id="bSide"><option value="0">правая</option><option value="1">левая</option></select></div>
+      <div class="row2" style="margin:0"><div><label for="bClock">Часы</label><input id="bClock" inputmode="numeric" placeholder="10"></div><div><label for="bNip">От соска, мм</label><input id="bNip" inputmode="decimal" placeholder="30"></div></div>
+    </div>
+    <div class="sub">Размеры, мм</div>
+    <div class="row"><input id="bs1" inputmode="decimal" placeholder="A"><input id="bs2" inputmode="decimal" placeholder="B"><input id="bs3" inputmode="decimal" placeholder="C"></div>
+    <div id="bSolid">
+      <div class="gg">
+        <div><label for="bShape">Форма</label><select id="bShape"><option value="0">овальная</option><option value="1">круглая</option><option value="2">неправильная</option></select></div>
+        <div><label for="bOr">Ориентация</label><select id="bOr"><option value="0">параллельная</option><option value="1">непараллельная (выше, чем шире)</option></select></div>
+        <div><label for="bMar">Контур</label><select id="bMar"><option value="0">чёткий (circumscribed)</option><option value="1">нечёткий (indistinct)</option><option value="2">угловатый (angular)</option><option value="3">микродольчатый</option><option value="4">спикулы</option></select></div>
+        <div><label for="bEcho">Эхогенность</label><select id="bEcho"><option value="0">гипоэхогенная</option><option value="1">изоэхогенная</option><option value="2">гиперэхогенная</option><option value="3">гетерогенная</option></select></div>
+        <div><label for="bPost">Дорсальные эффекты</label><select id="bPost"><option value="0">нет</option><option value="1">усиление</option><option value="2">акустическая тень</option><option value="3">комбинированные</option></select></div>
+      </div>
+      <label class="chk"><input type="checkbox" id="bCalc"> Микрокальцинаты в образовании</label>
+      <label class="chk"><input type="checkbox" id="bDuct"> Распространение по протоку</label>
+      <label class="chk"><input type="checkbox" id="bArch"> Нарушение архитектоники / втяжение кожи</label>
+      <label class="chk"><input type="checkbox" id="bVasc"> Внутренняя васкуляризация при ЦДК</label>
+      <label class="chk"><input type="checkbox" id="bStable"> Стабильно ≥ 2 лет (по прежним исследованиям)</label>
+    </div>
+    <label class="chk"><input type="checkbox" id="bAx"> Подозрительные подмышечные лимфоузлы</label>
+  </div>
+  <div class="card">
+    <h3>Результат</h3>
+    <div class="res" id="brRes" style="font-size:15px"></div>
+    <div class="sub" style="margin-top:12px">Фраза для протокола</div>
+    <textarea id="bTxt" style="min-height:120px;font-family:inherit;font-size:14px"></textarea>
+    <div class="bar"><button class="btn" id="bCopy">Копировать</button></div>
+    <div class="tablewrap"><table>
+      <tr><th>BI-RADS</th><th>Риск</th><th>Тактика</th></tr>
+      <tr><td>0</td><td>—</td><td>дообследование (маммография)</td></tr>
+      <tr><td>1</td><td>0%</td><td>плановый скрининг</td></tr>
+      <tr><td>2</td><td>0%</td><td>плановый скрининг</td></tr>
+      <tr><td>3</td><td>≤ 2%</td><td>УЗИ через 6, 12 и 24 мес</td></tr>
+      <tr><td>4A</td><td>&gt; 2–10%</td><td>биопсия</td></tr>
+      <tr><td>4B</td><td>&gt; 10–50%</td><td>биопсия</td></tr>
+      <tr><td>4C</td><td>&gt; 50–&lt; 95%</td><td>биопсия</td></tr>
+      <tr><td>5</td><td>≥ 95%</td><td>биопсия</td></tr>
+      <tr><td>6</td><td>верифицирован</td><td>лечение</td></tr>
+    </table></div>
+    <div class="note">В ACR BI-RADS нет балльной системы: подкатегория 4A/4B/4C здесь предлагается по числу подозрительных признаков (непараллельная ориентация, неправильная форма, нечёткий/угловатый/микродольчатый контур, спикулы, тень, кальцинаты, протоковое распространение, нарушение архитектоники). Это ориентир, итоговую категорию определяет врач.</div>
   </div>
 </div>
 </section>
@@ -736,6 +798,31 @@ gen(F,K){
  return {title:'УЛЬТРАЗВУКОВОЕ ИССЛЕДОВАНИЕ ОРГАНОВ МАЛОГО ТАЗА (трансвагинально)',d,norm:'Эхографических признаков патологии органов малого таза не выявлено.'};
 }},
 
+'Молочные железы':{
+form:()=>B('Общее',N('mb_dmc','День цикла')+S('mb_bg','Фоновая структура',['преимущественно жировая','фиброзно-жировая (гетерогенная)','преимущественно фиброгландулярная'])+N('mb_duct','Протоки, мм','≤3')+S('mb_ax','Подмышечные л/у',['не изменены','изменены']))
+ +[1,2].map(i=>B(`Образование ${i}`,S(`mb_s${i}`,'Железа',['— нет —','правая','левая'])+N(`mb_c${i}`,'Часы')+N(`mb_n${i}`,'От соска, мм')+N(`mb_z${i}`,'Макс. размер, мм')+S(`mb_t${i}`,'Тип',['простая киста','осложнённая киста','солидное, вероятно доброкачественное','подозрительное образование','лимфоузел внутримаммарный'])+S(`mb_b${i}`,'BI-RADS',['2','3','4A','4B','4C','5','6']))).join('')
+ +'<div class="note">Категорию образования можно определить на вкладке BI-RADS.</div>',
+gen(F,K){
+ const bg=gsel('mb_bg'),du=gnum('mb_duct'),ax=gsel('mb_ax'),dmc=gnum('mb_dmc');
+ let d=(dmc?`День менструального цикла: ${fm(dmc)}.\n\n`:'')+`Кожа и подкожная клетчатка не изменены. Фоновая эхоструктура: ${['преимущественно жировая','фиброзно-жировая (гетерогенная)','преимущественно фиброгландулярная'][bg]}.\nМлечные протоки ${du?fm(du)+' мм':'не расширены'}${du>3?' — расширены':''}.`;
+ const CAT=['2','3','4A','4B','4C','5','6'],TY=['простая киста','осложнённая киста','солидное образование, вероятно доброкачественное','подозрительное образование','внутримаммарный лимфоузел'];
+ const L=[1,2].map(i=>({s:gsel(`mb_s${i}`),c:gnum(`mb_c${i}`),n:gnum(`mb_n${i}`),z:gnum(`mb_z${i}`),t:gsel(`mb_t${i}`),b:CAT[gsel(`mb_b${i}`)]})).filter(x=>x.s);
+ const ord=c=>CAT.indexOf(c);
+ if(L.length)L.forEach((x,i)=>{const sd=x.s===1?'правой':'левой';
+  d+=`\nВ ${sd} молочной железе на ${fm(x.c)} ч, в ${fm(x.n)} мм от соска — ${TY[x.t]} ${fm(x.z)} мм (описание: ___), BI-RADS ${x.b}.`;
+  K.push(`${TY[x.t][0].toUpperCase()+TY[x.t].slice(1)} ${sd} молочной железы (${fm(x.c)} ч, ${fm(x.z)} мм) — BI-RADS ${x.b}. Рекомендовано: ${BREC[x.b]}.`);
+  const SD=x.s===1?'Правая МЖ':'Левая МЖ';ord(x.b)>=2?F.b(`${SD}: BI-RADS ${x.b}`):x.b==='3'?F.w(`${SD}: BI-RADS 3`):0;
+  if(x.t===3&&ord(x.b)<2)F.b(`${SD}: подозрительное образование, но BI-RADS ${x.b} — проверьте категорию`);
+  if(x.t===0&&x.b!=='2')F.w(`${SD}: простая киста обычно BI-RADS 2`);});
+ else d+='\nОчаговых образований в молочных железах не выявлено.';
+ d+=`\nПодмышечные лимфатические узлы ${ax?'изменены: ___.':'не увеличены, структура сохранена.'}`;
+ if(du>3){K.push(`Расширение млечных протоков до ${fm(du)} мм.`);F.w(`Протоки ${fm(du)} мм (> 3)`)}
+ if(ax){K.push('Изменённые подмышечные лимфатические узлы — ___.');F.b('Изменённые подмышечные л/у')}
+ const maxc=L.length?L.map(x=>x.b).sort((a,b)=>ord(b)-ord(a))[0]:(du>3?'2':'1');
+ if(L.length||ax||du>3)K.push(`Итоговая категория: BI-RADS ${ax&&ord(maxc)<2&&maxc!=='6'?'4A':maxc}.`);
+ return {title:'УЛЬТРАЗВУКОВОЕ ИССЛЕДОВАНИЕ МОЛОЧНЫХ ЖЕЛЁЗ',d,norm:'Эхографических признаков очаговой патологии молочных желёз не выявлено. BI-RADS 1.'};
+}},
+
 'Предстательная железа':{
 form:()=>B('Простата',S('pr_a','Доступ',['трансабдоминальный','трансректальный'])+N('pr1','Поперечный, мм')+N('pr2','ПЗР, мм')+N('pr3','Продольный, мм')+N('pr_psa','ПСА общ., нг/мл')+S('pr_e','Структура',['однородная','неоднородная (узловая гиперплазия)'])+N('pr_ipp','Протрузия в МП, мм')+C('pr_c','Кальцинаты'))
  +B('Мочевой пузырь',N('pb_v','Объём, мл')+N('pb_w','Стенка, мм','≤3')+N('pb_r','Остаточная моча, мл','≤50')),
@@ -844,6 +931,61 @@ $('orads').addEventListener('change',e=>{if(e.target.id!=='oTxt')calcOR()});
 $('oCopy').onclick=async()=>{const t=$('oTxt');try{await navigator.clipboard.writeText(t.value)}catch(e){t.select();document.execCommand('copy')}
  const b=$('oCopy');b.textContent='Скопировано ✓';setTimeout(()=>b.textContent='Копировать',1500)};
 calcOR();
+
+// ===== BI-RADS =====
+const BREC={'0':'дообследование — маммография / сравнение с прежними исследованиями','1':'плановый скрининг','2':'плановый скрининг',
+ '3':'контрольное УЗИ через 6 месяцев, затем через 12 и 24 месяца','4A':'биопсия под УЗ-контролем','4B':'биопсия под УЗ-контролем','4C':'биопсия под УЗ-контролем',
+ '5':'биопсия под УЗ-контролем, консультация онколога-маммолога','6':'лечение по плану онколога'};
+const BRISK={'0':'оценка неполная','1':'норма','2':'доброкачественные изменения','3':'вероятно доброкачественное (≤ 2%)','4A':'низкое подозрение (> 2–10%)','4B':'умеренное подозрение (> 10–50%)','4C':'высокое подозрение (> 50–< 95%)','5':'высоко вероятна злокачественность (≥ 95%)','6':'верифицированная злокачественность'};
+function biradsSolid(){
+ const why=[];let n=0;const add=(t,w=1)=>{n+=w;why.push(t)};
+ if(+$('bShape').value===2)add('неправильная форма');
+ if(+$('bOr').value===1)add('непараллельная ориентация');
+ const m=+$('bMar').value;if(m===4)add('спикулы',2);else if(m)add(['','нечёткий контур','угловатый контур','микродольчатый контур'][m]);
+ if(+$('bPost').value===2)add('акустическая тень');
+ if($('bCalc').checked)add('микрокальцинаты');
+ if($('bDuct').checked)add('распространение по протоку');
+ if($('bArch').checked)add('нарушение архитектоники');
+ return {n,why};
+}
+function calcBR(){
+ const t=$('bType').value;
+ $('bSolid').style.display=(t==='solid'||t==='complex')?'':'none';
+ let cat,why=[];
+ if(t==='norm')cat='1';else if(t==='cyst'||t==='ln')cat='2';else if(t==='ccyst'||t==='micro')cat='3';else if(t==='known')cat='6';
+ else{const r=biradsSolid();why=r.why;let n=r.n;
+  if(t==='complex'&&n<1)n=1;
+  if(t==='solid'&&n===0)cat=$('bStable').checked?'2':'3';
+  else cat=n>=5?'5':n>=3?'4C':n===2?'4B':'4A';
+  if(t==='complex'&&why.length===0)why.push('кистозно-солидное строение');}
+ let axUp=false;if($('bAx').checked&&t!=='known'&&['1','2','3'].includes(cat)){why.push('подозрительные подмышечные лимфоузлы');cat='4A';axUp=true}
+ const rec=axUp?'биопсия изменённого подмышечного лимфоузла под УЗ-контролем, маммография':BREC[cat];
+ const cls=['1','2'].includes(cat)?'ok':cat==='3'||cat==='0'?'warn':'bad';
+ $('brRes').innerHTML=`<span class="${cls}" style="font-size:17px">BI-RADS ${cat}</span> — ${BRISK[cat].replace(/</g,'&lt;')}`+(why.length?`<br>Признаки: ${why.join(', ')}`:'')+`<br>Тактика: ${rec}.`;
+ const side=+$('bSide').value?'левой':'правой',clk=$('bClock').value.trim(),nip=num('bNip');
+ const loc=`В ${side} молочной железе${clk?` на ${clk} ч`:' на ___ ч'}${nip?`, в ${fm(nip)} мм от соска,`:','}`;
+ const sz=['bs1','bs2','bs3'].map(num).filter(x=>x).map(fm).join(' × ')||'___';
+ let d;
+ if(t==='norm')d='Очаговых образований в молочных железах не выявлено.';
+ else if(t==='cyst')d=`${loc} определяется анэхогенное образование округлой формы с чёткими ровными контурами, тонкой стенкой и дорсальным усилением, ${sz} мм (простая киста).`;
+ else if(t==='ln')d=`${loc} определяется овальное гипоэхогенное образование с эхогенными воротами, ${sz} мм (внутримаммарный лимфоузел).`;
+ else if(t==='ccyst')d=`${loc} определяется кистозное образование с мелкодисперсной взвесью, без солидного компонента и кровотока, ${sz} мм (осложнённая киста).`;
+ else if(t==='micro')d=`${loc} определяется группа анэхогенных микрокист с тонкими перегородками, ${sz} мм.`;
+ else if(t==='known')d=`${loc} определяется ранее верифицированное образование ${sz} мм.`;
+ else{const SH=['овальной','круглой','неправильной'],MA=['чёткими','нечёткими','угловатыми','микродольчатыми','спикулообразными'],EC=['гипоэхогенное','изоэхогенное','гиперэхогенное','гетерогенное'],PO=['без дорсальных эффектов','с дорсальным усилением','с акустической тенью','с комбинированными дорсальными эффектами'];
+  d=`${loc} определяется ${t==='complex'?'кистозно-солидное':EC[+$('bEcho').value]} образование ${SH[+$('bShape').value]} формы, ориентация ${+$('bOr').value?'непараллельная':'параллельная'}, с ${MA[+$('bMar').value]} контурами, ${PO[+$('bPost').value]}, ${sz} мм.`;
+  if($('bCalc').checked)d+=' В структуре — микрокальцинаты.';
+  if($('bVasc').checked)d+=' При ЦДК — внутренняя васкуляризация.';
+  if($('bDuct').checked)d+=' Отмечается распространение по протоку.';
+  if($('bArch').checked)d+=' Нарушение архитектоники окружающих тканей.';}
+ if($('bAx').checked)d+=' Подмышечные лимфоузлы изменены: ___.';
+ $('bTxt').value=`${d}\nBI-RADS ${cat}. Рекомендовано: ${rec}.`;
+}
+$('birads').addEventListener('input',e=>{if(e.target.id!=='bTxt')calcBR()});
+$('birads').addEventListener('change',e=>{if(e.target.id!=='bTxt')calcBR()});
+$('bCopy').onclick=async()=>{const t=$('bTxt');try{await navigator.clipboard.writeText(t.value)}catch(e){t.select();document.execCommand('copy')}
+ const b=$('bCopy');b.textContent='Скопировано ✓';setTimeout(()=>b.textContent='Копировать',1500)};
+calcBR();
 
 function recalc(){calcThy();calcPr();calcB();calcO();calcE();calcT();calcCRL();calcLMP()}
 document.addEventListener('input',e=>{if(e.target.id==='nSearch')renderNorms();else if(e.target.id!=='tplText')recalc()});
