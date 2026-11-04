@@ -426,6 +426,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px 16px 30p
 </div>
 </section>
 
+<details class="card" style="margin-top:12px"><summary style="cursor:pointer;font-weight:600">Источники</summary><ol style="margin:8px 0 0;padding-left:20px;font-size:13px;line-height:1.5"><li>Tessler FN и др. ACR TI-RADS: White Paper. J Am Coll Radiol 2017;14:587–595. <a href="https://pubmed.ncbi.nlm.nih.gov/28372962/" target="_blank" rel="noopener">PubMed</a></li><li>Strachowski LM и др. O-RADS US v2022. Radiology 2023;308(3):e230685. <a href="https://pubmed.ncbi.nlm.nih.gov/37698472/" target="_blank" rel="noopener">PubMed</a></li><li>ACR BI-RADS Atlas, 5-е изд., 2013. <a href="https://www.acr.org/Clinical-Resources/Reporting-and-Data-Systems/Bi-Rads" target="_blank" rel="noopener">acr.org</a></li><li>Foley KG и др. Полипы желчного пузыря: рекомендации ESGAR и др. Eur Radiol 2022;32:3358–3368. <a href="https://pubmed.ncbi.nlm.nih.gov/34918177/" target="_blank" rel="noopener">PubMed</a></li><li>Teede HJ и др. Международное руководство по СПКЯ 2023. Hum Reprod 2023;38:1655–1679. <a href="https://pubmed.ncbi.nlm.nih.gov/37580037/" target="_blank" rel="noopener">PubMed</a></li><li>Brunn J и др. Объём долей щитовидной железы (коэффициент 0,479). Dtsch Med Wochenschr 1981;106:1338–1340. <a href="https://pubmed.ncbi.nlm.nih.gov/7274082/" target="_blank" rel="noopener">PubMed</a></li><li>Robinson HP, Fleming JE. Срок по КТР. Br J Obstet Gynaecol 1975;82:702–710. <a href="https://pubmed.ncbi.nlm.nih.gov/1182090/" target="_blank" rel="noopener">PubMed</a></li><li>Salomon LJ и др. ISUOG: УЗИ в I триместре (датировка). Ultrasound Obstet Gynecol 2013;41:102–113. <a href="https://pubmed.ncbi.nlm.nih.gov/23280739/" target="_blank" rel="noopener">PubMed</a></li><li>ACOG Committee Opinion 700. Методы расчёта ПДР. Obstet Gynecol 2017;129:e150–e154. <a href="https://pubmed.ncbi.nlm.nih.gov/28426621/" target="_blank" rel="noopener">PubMed</a></li><li>Hadlock FP и др. Срок по фетометрии. Radiology 1984;152:497–501. <a href="https://pubmed.ncbi.nlm.nih.gov/6739822/" target="_blank" rel="noopener">PubMed</a></li><li>Hadlock FP и др. Расчёт ПМП. Am J Obstet Gynecol 1985;151:333–337. <a href="https://pubmed.ncbi.nlm.nih.gov/3881966/" target="_blank" rel="noopener">PubMed</a></li><li>Hadlock FP и др. Перцентили ПМП. Radiology 1991;181:129–133. <a href="https://pubmed.ncbi.nlm.nih.gov/1887021/" target="_blank" rel="noopener">PubMed</a></li><li>Gordijn SJ и др. Консенсус Delphi по ЗРП. Ultrasound Obstet Gynecol 2016;48:333–339. <a href="https://pubmed.ncbi.nlm.nih.gov/26909664/" target="_blank" rel="noopener">PubMed</a></li><li>Lees CC и др. ISUOG: ЗРП. Ultrasound Obstet Gynecol 2020;56:298–312. <a href="https://pubmed.ncbi.nlm.nih.gov/32738107/" target="_blank" rel="noopener">PubMed</a></li><li>Touboul PJ и др. Mannheim: КИМ и бляшка. Cerebrovasc Dis 2012;34:290–296. <a href="https://pubmed.ncbi.nlm.nih.gov/23128470/" target="_blank" rel="noopener">PubMed</a></li></ol><div class="note">Ориентировочные нормы органов (вкладка «Нормы») — сводные значения из отечественных и зарубежных руководств по УЗ-диагностике; при расхождении опирайтесь на нормативы вашего учреждения.</div></details>
 </main>
 <button class="jump" id="gJump">К протоколу ↓</button>
 <footer>Автор: Жумагулов Н. М., врач ультразвуковой диагностики · АДЦ «Сономедплюс», г. Ош<br><a href="https://www.instagram.com/jumagulovnm/" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600;text-decoration:none">Instagram @jumagulovnm</a><br>Справочный инструмент для специалистов. Не заменяет клиническое решение врача.</footer>
@@ -498,7 +499,7 @@ const today=()=>{const d=new Date();d.setHours(0,0,0,0);return d};
 const toInput=d=>new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10);
 const parseD=id=>$(id).value?new Date($(id).value+'T00:00:00'):null;
 const fmtD=d=>d.toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric'});
-const ga=days=>`${Math.floor(days/7)} нед. ${Math.round(days%7)} дн.`;
+const ga=days=>{const t=Math.round(days);return `${Math.floor(t/7)} нед. ${t%7} дн.`};
 function calcCRL(){
   const c=num('crl'); if(!c){$('crlRes').textContent='Введите КТР';return}
   const days=8.052*Math.sqrt(c*1.037)+23.73, ex=parseD('crlDate')||today();
@@ -556,7 +557,7 @@ function hadlockGA(b,h,a,fl){ // см → недели
   else if(h&&a&&b)comb=10.58+0.005*h*h+0.3635*a+0.02864*b*a;
   return {one,comb};
 }
-const gaWD=w=>`${Math.floor(w)} нед. ${Math.min(6,Math.round((w%1)*7))} дн.`;
+const gaWD=w=>{const t=Math.round(w*7);return `${Math.floor(t/7)} нед. ${t%7} дн.`};
 let hText='';
 function calcH(){
   const mm=id=>{const v=num(id);return v?v/10:null};
@@ -583,7 +584,7 @@ function calcH(){
         s+=`<br>Перцентиль: <span class="${cls}">${cc} (${band})</span><br><span class="note" style="margin:0">Норма на ${w} нед. ${dd} дн.: 10-й ${Math.round(p[1])} г · 50-й ${Math.round(p[2])} г · 90-й ${Math.round(p[3])} г</span>`;
         pt=`ПМП ${Math.round(efw)} г (Hadlock), ${cc} перцентиль по Hadlock 1991 (${band}).`;
         if(efw<p[0])s+=`<br><span class="bad">ПМП < 3-го перцентиля — изолированный критерий ЗРП (Delphi)</span>`;
-        else if(efw<p[1])s+=`<br><span class="warn">МГВ: для ЗРП по Delphi нужны доп. критерии — ${est<32?'ПИ маточных артерий > 95 и/или ПИ артерии пуповины > 95-го перцентиля':'ЦПО < 5-го или ПИ артерии пуповины > 95-го перцентиля, снижение перцентиля более чем на 2 квартиля'}</span>`;
+        else if(efw<p[1])s+=`<br><span class="warn">МГВ: для ЗРП по Delphi нужны доп. критерии — ${est<32?'ПИ маточных артерий > 95-го и/или ПИ артерии пуповины > 95-го перцентиля':'хотя бы один из: ЦПО < 5-го или ПИ артерии пуповины > 95-го перцентиля; снижение перцентиля ОЖ/ПМП более чем на 2 квартиля'}</span>`;
         else if(efw>p[3])s+='<br><span class="warn">Крупный для срока плод (> 90-го перцентиля)</span>';
       }}
     parts.push(pt||`ПМП ${Math.round(efw)} г (Hadlock).`);
