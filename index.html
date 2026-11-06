@@ -449,9 +449,16 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px 16px 30p
     <div class="row2"><input id="hAC" inputmode="decimal" placeholder="ОЖ"><input id="hFL" inputmode="decimal" placeholder="ДБ"></div>
     <div class="sub">Установленный срок (по раннему УЗИ / ДПМ / ЭКО)</div>
     <div class="row2"><input id="hW" inputmode="numeric" placeholder="недель"><input id="hD" inputmode="numeric" placeholder="дней (0–6)"></div>
+    <details class="vhelp" id="hDopW"><summary>Допплерометрия и динамика — для критериев ЗРП</summary>
+      <div class="row2" style="margin-top:8px"><div><label for="hUA">ПИ артерии пуповины</label><input id="hUA" inputmode="decimal" placeholder="напр. 1,05"></div><div><label for="hMCA">ПИ СМА</label><input id="hMCA" inputmode="decimal" placeholder="напр. 1,80"></div></div>
+      <label class="chk"><input type="checkbox" id="hAEDF"> Нулевой или реверсный диастолический кровоток в артерии пуповины</label>
+      <label class="chk"><input type="checkbox" id="hCPR5"> ЦПО &lt; 5-го перцентиля (по вашей таблице / аппарату)</label>
+      <label class="chk"><input type="checkbox" id="hUtA"> Средний ПИ маточных артерий &gt; 95-го перцентиля</label>
+      <label class="chk"><input type="checkbox" id="hCross"> Снижение перцентиля ОЖ/ПМП более чем на 2 квартиля (по прежним УЗИ)</label>
+    </details>
     <div class="res" id="hRes">Введите размеры</div>
     <div class="bar"><button class="btn sec" id="hCopy">Копировать в протокол</button></div>
-    <div class="note">Срок — Hadlock 1984; ПМП — Hadlock 1985 (по доступным параметрам); перцентиль ПМП — Hadlock 1991 (Radiology 181:129), интерполяция между неделями, 10–40 нед. Перцентиль считается только от установленного срока, не от срока по фетометрии. ЗРП — консенсус Delphi (Gordijn 2016, ISUOG 2020): кроме ПМП учитываются ОЖ, допплерометрия и динамика.</div>
+    <div class="note">Срок — Hadlock 1984; ПМП — Hadlock 1985 (по доступным параметрам); перцентиль ПМП — Hadlock 1991 (Radiology 181:129), интерполяция между неделями, 10–40 нед. Перцентиль считается только от установленного срока, не от срока по фетометрии. Перцентили БПР, ОГ, ОЖ, ДБ — INTERGROWTH-21st (Papageorghiou 2014, 14–40 нед.); ПИ артерии пуповины — INTERGROWTH-21st (Drukker 2020, 24–40 нед.). ЗРП — консенсус Delphi (Gordijn 2016, ISUOG 2020). Перцентили ПИ СМА, ЦПО и маточных артерий не рассчитываются — отметьте их по своей таблице или по аппарату.</div>
   </div>
   <div class="card">
     <h3>Околоплодные воды</h3>
@@ -517,7 +524,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px 16px 30p
 <details class="card" style="margin-top:12px"><summary style="cursor:pointer;font-weight:600">Источники</summary><ol style="margin:8px 0 0;padding-left:20px;font-size:13px;line-height:1.5"><li>Tessler FN и др. ACR TI-RADS: White Paper. J Am Coll Radiol 2017;14:587–595. <a href="https://pubmed.ncbi.nlm.nih.gov/28372962/" target="_blank" rel="noopener">PubMed</a></li><li>Strachowski LM и др. O-RADS US v2022. Radiology 2023;308(3):e230685. <a href="https://pubmed.ncbi.nlm.nih.gov/37698472/" target="_blank" rel="noopener">PubMed</a></li><li>ACR BI-RADS Manual v2025 (лексикон УЗИ, категории оценки). <a href="https://www.acr.org/Clinical-Resources/Reporting-and-Data-Systems/Bi-Rads" target="_blank" rel="noopener">acr.org</a></li><li>Foley KG и др. Полипы желчного пузыря: рекомендации ESGAR и др. Eur Radiol 2022;32:3358–3368. <a href="https://pubmed.ncbi.nlm.nih.gov/34918177/" target="_blank" rel="noopener">PubMed</a></li><li>Teede HJ и др. Международное руководство по СПКЯ 2023. Hum Reprod 2023;38:1655–1679. <a href="https://pubmed.ncbi.nlm.nih.gov/37580037/" target="_blank" rel="noopener">PubMed</a></li><li>Brunn J и др. Объём долей щитовидной железы (коэффициент 0,479). Dtsch Med Wochenschr 1981;106:1338–1340. <a href="https://pubmed.ncbi.nlm.nih.gov/7274082/" target="_blank" rel="noopener">PubMed</a></li><li>Robinson HP, Fleming JE. Срок по КТР. Br J Obstet Gynaecol 1975;82:702–710. <a href="https://pubmed.ncbi.nlm.nih.gov/1182090/" target="_blank" rel="noopener">PubMed</a></li><li>Salomon LJ и др. ISUOG: УЗИ в I триместре (датировка). Ultrasound Obstet Gynecol 2013;41:102–113. <a href="https://pubmed.ncbi.nlm.nih.gov/23280739/" target="_blank" rel="noopener">PubMed</a></li><li>ACOG Committee Opinion 700. Методы расчёта ПДР. Obstet Gynecol 2017;129:e150–e154. <a href="https://pubmed.ncbi.nlm.nih.gov/28426621/" target="_blank" rel="noopener">PubMed</a></li><li>Hadlock FP и др. Срок по фетометрии. Radiology 1984;152:497–501. <a href="https://pubmed.ncbi.nlm.nih.gov/6739822/" target="_blank" rel="noopener">PubMed</a></li><li>Hadlock FP и др. Расчёт ПМП. Am J Obstet Gynecol 1985;151:333–337. <a href="https://pubmed.ncbi.nlm.nih.gov/3881966/" target="_blank" rel="noopener">PubMed</a></li><li>Hadlock FP и др. Перцентили ПМП. Radiology 1991;181:129–133. <a href="https://pubmed.ncbi.nlm.nih.gov/1887021/" target="_blank" rel="noopener">PubMed</a></li><li>Gordijn SJ и др. Консенсус Delphi по ЗРП. Ultrasound Obstet Gynecol 2016;48:333–339. <a href="https://pubmed.ncbi.nlm.nih.gov/26909664/" target="_blank" rel="noopener">PubMed</a></li><li>Lees CC и др. ISUOG: ЗРП. Ultrasound Obstet Gynecol 2020;56:298–312. <a href="https://pubmed.ncbi.nlm.nih.gov/32738107/" target="_blank" rel="noopener">PubMed</a></li><li>Touboul PJ и др. Mannheim: КИМ и бляшка. Cerebrovasc Dis 2012;34:290–296. <a href="https://pubmed.ncbi.nlm.nih.gov/23128470/" target="_blank" rel="noopener">PubMed</a></li><li>Konuş OL и др. Размеры печени, селезёнки и почек у детей. AJR 1998;171:1693–1698. <a href="https://pubmed.ncbi.nlm.nih.gov/9843315/" target="_blank" rel="noopener">PubMed</a></li><li>Obrycki Ł и др. Длина почек у детей 0–19 лет (многоцентровое исследование). Pediatr Nephrol 2022;37:1075–1085. <a href="https://pubmed.ncbi.nlm.nih.gov/34657197/" target="_blank" rel="noopener">PubMed</a></li><li>Zimmermann MB и др. (WHO/ICCIDD). Объём щитовидной железы у детей 6–12 лет. Am J Clin Nutr 2004;79:231–237. <a href="https://pubmed.ncbi.nlm.nih.gov/14749228/" target="_blank" rel="noopener">PubMed</a></li><li>Hernanz-Schulman M и др. Холедох у детей. Radiology 1995;195:193–195. <a href="https://pubmed.ncbi.nlm.nih.gov/7892467/" target="_blank" rel="noopener">PubMed</a></li><li>Hernanz-Schulman M. Гипертрофический пилоростеноз. Radiology 2003;227:319–331. <a href="https://pubmed.ncbi.nlm.nih.gov/12637675/" target="_blank" rel="noopener">PubMed</a></li><li>Nguyen HT и др. Классификация UTD. J Pediatr Urol 2014;10:982–998. <a href="https://pubmed.ncbi.nlm.nih.gov/25435247/" target="_blank" rel="noopener">PubMed</a></li><li>Austin PF и др. ICCS: терминология функции нижних мочевых путей у детей. Neurourol Urodyn 2016;35:471–481. <a href="https://pubmed.ncbi.nlm.nih.gov/25772695/" target="_blank" rel="noopener">PubMed</a></li></ol><div class="note">Ориентировочные нормы органов (вкладка «Нормы») — сводные значения из отечественных и зарубежных руководств по УЗ-диагностике; при расхождении опирайтесь на нормативы вашего учреждения.</div></details>
 </main>
 <button class="jump" id="gJump">К протоколу ↓</button>
-<footer>Автор: Жумагулов Н. М., врач ультразвуковой диагностики · АДЦ «Сономедплюс», г. Ош<br><a href="https://www.instagram.com/jumagulovnm/" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600;text-decoration:none">Instagram @jumagulovnm</a><br>Справочный инструмент для специалистов. Не заменяет клиническое решение врача.<br><span style="opacity:.75">Версия 2.0 · обновлено 07.11.2026</span></footer>
+<footer>Автор: Жумагулов Н. М., врач ультразвуковой диагностики · АДЦ «Сономедплюс», г. Ош<br><a href="https://www.instagram.com/jumagulovnm/" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600;text-decoration:none">Instagram @jumagulovnm</a><br>Справочный инструмент для специалистов. Не заменяет клиническое решение врача.<br><span style="opacity:.75">Версия 2.1 · обновлено 07.11.2026</span></footer>
 
 <script>
 const $=id=>document.getElementById(id);
@@ -526,7 +533,7 @@ const num=id=>{const v=parseFloat(String($(id).value).replace(',','.'));return i
 const RNG={tr1:[3,100],tr2:[2,60],tr3:[2,60],tl1:[3,100],tl2:[2,60],tl3:[2,60],p1:[10,150],p2:[10,150],p3:[10,150],psa:[0,500],
  b1:[10,250],b2:[10,250],b3:[10,250],r1:[3,200],r2:[3,200],r3:[3,200],o1:[5,250],o2:[5,250],o3:[5,250],e1:[1,400],e2:[1,400],e3:[1,400],
  tSize:[2,100],oSize:[5,400],bs1:[2,150],bs2:[2,150],bs3:[2,150],bNip:[0,250],bClock:[1,12],crl:[1,100],puW:[4,42],puD:[0,6],hW:[4,43],hD:[0,6],
- hBPD:[10,115],hHC:[40,420],hAC:[40,450],hFL:[5,85],kY:[0,18],kM:[0,11],kH:[40,210],kW:[1,200],kKr:[20,160],kKl:[20,160],kLiv:[40,220],kSpl:[20,200],kCbd:[0,15],kPel:[0,80],kTv:[0.1,50],
+ hBPD:[10,115],hUA:[0.2,3.5],hMCA:[0.3,4],ob_ua:[0.2,3.5],ob_mca:[0.3,4],ob_hr:[50,240],ob_w:[12,43],ob_d:[0,6],ob_bpd:[10,115],ob_hc:[40,420],ob_ac:[40,450],ob_fl:[5,85],ob_sdp:[0,200],ob_afi:[0,500],ob_cx:[2,70],ob_pel:[0,60],ob_os:[0,200],ob_plt:[5,100],hHC:[40,420],hAC:[40,450],hFL:[5,85],kY:[0,18],kM:[0,11],kH:[40,210],kW:[1,200],kKr:[20,160],kKl:[20,160],kLiv:[40,220],kSpl:[20,200],kCbd:[0,15],kPel:[0,80],kTv:[0.1,50],
  l_r:[60,250],l_l:[20,120],l_pv:[4,30],l_cbd:[1,30],kr_l:[30,200],kl_l:[30,200],kr_w:[15,120],kl_w:[15,120],kr_p:[3,40],kl_p:[3,40],
  t_r1:[10,100],t_r2:[3,60],t_r3:[3,60],t_l1:[10,100],t_l2:[3,60],t_l3:[3,60],t_is:[0,30],pr1:[10,150],pr2:[10,150],pr3:[10,150],
  afiQ1:[0,150],afiQ2:[0,150],afiQ3:[0,150],afiQ4:[0,150],sdp:[0,200],cxL:[2,70],cxW:[4,42],fPel:[0,60],fPelW:[14,42],lmpC:[20,60]};
@@ -673,12 +680,42 @@ function hadlockGA(b,h,a,fl){ // см → недели
   else if(h&&a&&b)comb=10.58+0.005*h*h+0.3635*a+0.02864*b*a;
   return {one,comb};
 }
+// ===== INTERGROWTH-21st: биометрия (Papageorghiou 2014, Lancet 384:869) и ПИ артерии пуповины (Drukker 2020, AJOG 222:602) =====
+const IGB={
+ БПР:g=>[5.60878+0.158369*g*g-0.00256379*g**3, Math.exp(0.101242+0.00150557*g**3-0.000771535*g**3*Math.log(g)+0.0000999638*g**3*Math.log(g)**2)],
+ ОГ:g=>[-28.2849+1.69267*g*g-0.397485*g*g*Math.log(g), 1.98735+0.0136772*g**3-0.00726264*g**3*Math.log(g)+0.000976253*g**3*Math.log(g)**2],
+ ОЖ:g=>[-81.3243+11.6772*g-0.000561865*g**3, -4.36302+0.121445*g*g-0.0130256*g**3+0.00282143*g**3*Math.log(g)],
+ ДБ:g=>[-39.9616+4.32298*g-0.0380156*g*g, Math.exp(0.605843-42.0014*g**-2+0.00000917972*g**3)]};
+function igCent(par,mm,g){if(!mm||g<14||g>40)return null;const [m,sd]=IGB[par](g);return ncdf((mm-m)/sd)*100}
+function uaCent(pi,g){if(!pi||g<24||g>40)return null;
+ const mu=1.02944+77.7456*g**-2-0.000004455*g**3, sg=-0.00645693+254.885*Math.log(g)*g**-2-715.949*g**-2, L=-0.0768617;
+ const z=(Math.exp((pi-mu)*L/sg)-1)/L; return {c:ncdf(z)*100,p95:mu+sg/L*Math.log(1+1.64485*L),p5:mu+sg/L*Math.log(1-1.64485*L)}}
+const pcTxt=c=>c<1?'< 1':c>99?'> 99':String(Math.round(c));
 const gaWD=w=>{const t=Math.round(w*7);return `${Math.floor(t/7)} нед. ${t%7} дн.`};
+// ЗРП по Delphi (Gordijn 2016): ранняя < 32 нед., поздняя ≥ 32 нед.
+function delphiTxt(est,efw3,efw10,efw90){
+ const b=num('hAC')?num('hAC')/10:null,ac=b?igCent('ОЖ',b*10,est):null,ac3=ac!=null&&ac<3,ac10=ac!=null&&ac<10;
+ const uaV=num('hUA'),u=uaV?uaCent(uaV,est):null,uaHi=!!(u&&u.c>95),aedf=$('hAEDF').checked,cpr5=$('hCPR5').checked,uta=$('hUtA').checked,cross=$('hCross').checked;
+ const lt3=efw3||ac3,lt10=efw10||ac10,src=[efw3||efw10?'ПМП':'',ac3||ac10?'ОЖ':''].filter(x=>x).join('/');
+ if(est<32){
+  if(lt3)return `<br><span class="bad">Ранняя ЗРП (Delphi): ${src} < 3-го перцентиля — изолированный критерий</span>`;
+  if(aedf)return '<br><span class="bad">Ранняя ЗРП (Delphi): нулевой/реверсный диастолический кровоток в артерии пуповины — изолированный критерий</span>';
+  if(lt10&&(uta||uaHi))return `<br><span class="bad">Ранняя ЗРП (Delphi): ${src} < 10-го перцентиля + ${[uta?'ПИ маточных артерий > 95-го':'',uaHi?'ПИ артерии пуповины > 95-го':''].filter(x=>x).join(' и ')}</span>`;
+  if(lt10)return `<br><span class="warn">${src} < 10-го перцентиля — МГВ. Для ранней ЗРП по Delphi нужно также: ПИ маточных артерий > 95-го и/или ПИ артерии пуповины > 95-го перцентиля</span>`;
+ }else{
+  if(lt3)return `<br><span class="bad">Поздняя ЗРП (Delphi): ${src} < 3-го перцентиля — изолированный критерий</span>`;
+  const n=[lt10,cross,cpr5||uaHi].filter(x=>x).length;
+  if(n>=2)return `<br><span class="bad">Поздняя ЗРП (Delphi): ${[lt10?src+' < 10-го перцентиля':'',cross?'снижение перцентиля > 2 квартилей':'',cpr5||uaHi?[cpr5?'ЦПО < 5-го':'',uaHi?'ПИ артерии пуповины > 95-го':''].filter(x=>x).join(' / '):''].filter(x=>x).join(' + ')}</span>`;
+  if(lt10)return `<br><span class="warn">${src} < 10-го перцентиля — МГВ. Для поздней ЗРП по Delphi нужен ещё хотя бы один из: ЦПО < 5-го или ПИ артерии пуповины > 95-го перцентиля; снижение перцентиля ОЖ/ПМП более чем на 2 квартиля</span>`;
+ }
+ if(efw90)return '<br><span class="warn">Крупный для срока плод (ПМП > 90-го перцентиля)</span>';
+ return '';
+}
 let hText='';
 function calcH(){
   const mm=id=>{const v=num(id);return v?v/10:null};
   const b=mm('hBPD'),h=mm('hHC'),a=mm('hAC'),fl=mm('hFL');
-  if(outR(['hBPD','hHC','hAC','hFL','hW','hD'])){$('hRes').innerHTML='<span class="bad">Есть значения вне допустимого диапазона — исправьте отмеченные поля. Расчёт не выполнен.</span>';hText='';return}
+  if(outR(['hBPD','hHC','hAC','hFL','hW','hD','hUA','hMCA'])){$('hRes').innerHTML='<span class="bad">Есть значения вне допустимого диапазона — исправьте отмеченные поля. Расчёт не выполнен.</span>';hText='';return}
   if(!b&&!h&&!a&&!fl){$('hRes').textContent='Введите размеры';hText='';return}
   const {one,comb}=hadlockGA(b,h,a,fl);
   let s='<b>Срок по фетометрии:</b><br>'+Object.entries(one).filter(([k,v])=>v).map(([k,v])=>`${k}: ${gaWD(v)}`).join('; ');
@@ -700,12 +737,21 @@ function calcH(){
         const cc=c<1?'< 1':c>99?'> 99':'≈ '+Math.round(c);
         s+=`<br>Перцентиль: <span class="${cls}">${cc} (${band})</span><br><span class="note" style="margin:0">Норма на ${w} нед. ${dd} дн.: 10-й ${Math.round(p[1])} г · 50-й ${Math.round(p[2])} г · 90-й ${Math.round(p[3])} г</span>`;
         pt=`ПМП ${Math.round(efw)} г (Hadlock), ${cc} перцентиль по Hadlock 1991 (${band}).`;
-        if(efw<p[0])s+=`<br><span class="bad">ПМП < 3-го перцентиля — изолированный критерий ЗРП (Delphi)</span>`;
-        else if(efw<p[1])s+=`<br><span class="warn">МГВ: для ЗРП по Delphi нужны доп. критерии — ${est<32?'ПИ маточных артерий > 95-го и/или ПИ артерии пуповины > 95-го перцентиля':'хотя бы один из: ЦПО < 5-го или ПИ артерии пуповины > 95-го перцентиля; снижение перцентиля ОЖ/ПМП более чем на 2 квартиля'}</span>`;
-        else if(efw>p[3])s+='<br><span class="warn">Крупный для срока плод (> 90-го перцентиля)</span>';
+        s+=delphiTxt(est,efw<p[0],efw<p[1],efw>p[3]);
       }}
     parts.push(pt||`ПМП ${Math.round(efw)} г (Hadlock).`);
   }else s+='<br><br><span class="note" style="margin:0">Для ПМП нужны минимум ОЖ и ДБ</span>';
+  if(est!=null&&est>=14&&est<=40){const ig=[['БПР',b],['ОГ',h],['ОЖ',a],['ДБ',fl]].filter(([k,v])=>v).map(([k,v])=>{const c=igCent(k,v*10,est);return `${k} ${pcTxt(c)}`});
+   if(ig.length){s+=`<br><br><b>Перцентили биометрии</b> (INTERGROWTH-21st, на ${w} нед. ${dd} дн.): ${ig.join(' · ')}`;
+    const ac=a?igCent('ОЖ',a*10,est):null;if(ac!=null){parts.push(`ОЖ ${fm(a*10)} мм — ${pcTxt(ac)} перцентиль (INTERGROWTH-21st).`);
+     if(ac<3)s+='<br><span class="bad">ОЖ < 3-го перцентиля</span>';else if(ac<10)s+='<br><span class="warn">ОЖ < 10-го перцентиля</span>'}}}
+  const ua=num('hUA'),mca=num('hMCA');
+  if(ua||mca){s+='<br><br><b>Допплерометрия</b>';
+   if(ua){const u=est!=null?uaCent(ua,est):null;
+    s+=`<br>ПИ артерии пуповины ${f(ua,2)}`+(u?` — ${pcTxt(u.c)} перцентиль (норма 5–95-й: ${f(u.p5,2)}–${f(u.p95,2)})`+(u.c>95?' — <span class="bad">&gt; 95-го</span>':''):est==null?' — <span class="warn">укажите срок</span>':' — перцентиль доступен для 24–40 нед.');
+    parts.push(`ПИ артерии пуповины ${f(ua,2)}${u?` (${pcTxt(u.c)} перцентиль, INTERGROWTH-21st)`:''}.`)}
+   if(mca){s+=`<br>ПИ СМА ${f(mca,2)}`;parts.push(`ПИ СМА ${f(mca,2)}.`)}
+   if(ua&&mca){const cpr=mca/ua;s+=`<br>ЦПО (ПИ СМА / ПИ АП): <b>${f(cpr,2)}</b>`+(cpr<1?' — <span class="bad">&lt; 1</span>':'')+'<br><span class="note" style="margin:0">Перцентиль ЦПО сверьте по своей таблице и при необходимости отметьте флажок выше.</span>';parts.push(`ЦПО ${f(cpr,2)}.`)}}
   hText=parts.join('\n');
   $('hRes').innerHTML=s;
 }
@@ -847,6 +893,67 @@ function trTxt(tr,sz){const [fna,fu]=TRREC[tr]||[null,null];
   if(sz>=fna)return 'показана ТАБ';if(sz>=fu)return 'рекомендовано динамическое наблюдение';return 'ТАБ и наблюдение не требуются'}
 
 const GEN={
+'Беременность (II–III триместр)':{
+form:()=>B('Срок и плод',N('ob_w','Установленный срок, нед.')+N('ob_d','дней (0–6)')+S('ob_n','Плод',['один живой','двойня — описать каждого']) +S('ob_pr','Предлежание',['головное','тазовое','поперечное положение','косое положение','неустойчивое'])+N('ob_hr','ЧСС, уд/мин','110–160')+S('ob_mv','Двигательная активность',['сохранена','снижена']))
+ +B('Фетометрия, мм',N('ob_bpd','БПР')+N('ob_hc','ОГ')+N('ob_ac','ОЖ')+N('ob_fl','ДБ'))
+ +B('Анатомия',S('ob_an','Анатомия плода',['без видимых аномалий в объёме исследования','не оценивалась (не скрининговый срок)','выявлены изменения — описать'])+N('ob_pel','Лоханки, мм (наибольшая)'))
+ +B('Воды и плацента',N('ob_sdp','Вертикальный карман, мм','20–80')+N('ob_afi','ИАЖ, мм','50–250')+S('ob_pl','Плацента',['по передней стенке','по задней стенке','в дне','по правой боковой стенке','по левой боковой стенке'])+N('ob_os','До внутреннего зева, мм (0 — перекрывает)')+N('ob_plt','Толщина плаценты, мм')+S('ob_cv','Пуповина',['3 сосуда','2 сосуда (ЕАП)'])+S('ob_nk','Петли пуповины на шее',['не визуализируются','однократно','многократно']))
+ +B('Допплерометрия и шейка',N('ob_ua','ПИ артерии пуповины')+N('ob_mca','ПИ СМА')+N('ob_cx','Длина шейки (ТВ), мм'))
+ +'<div class="note">Срок и ПМП — Hadlock; перцентили ОЖ и ПИ артерии пуповины — INTERGROWTH-21st; перцентиль ПМП — Hadlock 1991. Подробная оценка ЗРП — на вкладке «Акушерство».</div>',
+gen(F,K){
+ const w=gnum('ob_w'),dd=gnum('ob_d')||0,est=w?w+dd/7:null,pr=gsel('ob_pr'),hr=gnum('ob_hr'),mv=gsel('ob_mv'),twin=gsel('ob_n');
+ const ua0=gnum('ob_ua'),bp=gnum('ob_bpd'),hc=gnum('ob_hc'),ac=gnum('ob_ac'),fl=gnum('ob_fl'),cm=x=>x?x/10:null;
+ const PR=['головное предлежание','тазовое предлежание','поперечное положение','косое положение','неустойчивое положение'];
+ let d=`Срок по установленным данным: ${w?`${fm(w)} нед. ${fm(dd)} дн.`:'___ нед.'}\nВ полости матки ${twin?'двойня: ___':'один живой плод'}, ${PR[pr]}. Сердцебиение ритмичное, ЧСС ${fm(hr)} уд/мин. Двигательная активность ${mv?'снижена':'сохранена'}.\n\nФЕТОМЕТРИЯ: БПР ${fm(bp)} мм, ОГ ${fm(hc)} мм, ОЖ ${fm(ac)} мм, ДБ ${fm(fl)} мм.`;
+ const {comb}=hadlockGA(cm(bp),cm(hc),cm(ac),cm(fl));
+ if(comb)d+=` Срок по фетометрии (Hadlock): ${gaWD(comb)}`;
+ const e=hadlockEFW(cm(bp),cm(hc),cm(ac),cm(fl));let efw=null,band='';
+ if(e){efw=Math.pow(10,e[0]);d+=` ПМП ${Math.round(efw)} г`;
+  const p=est!=null?hwAt(est):null;
+  if(p){const sd=(p[3]-p[1])/(2*1.2816),c=ncdf((efw-p[2])/sd)*100;band=c<3?'<3':c<10?'<10':c>90?'>90':'';d+=` (${pcTxt(c)} перцентиль, Hadlock 1991)`}
+  d+='.'}else if(comb)d+='.';
+ const acc=ac&&est?igCent('ОЖ',ac,est):null; if(acc!=null)d+=` ОЖ — ${pcTxt(acc)} перцентиль (INTERGROWTH-21st).`;
+ const an=gsel('ob_an'),pel=gnum('ob_pel');
+ d+=`\n\nАНАТОМИЯ ПЛОДА: ${['видимых аномалий в объёме исследования не выявлено','детальная оценка анатомии не проводилась','___'][an]}.`+(pel?` Лоханки почек до ${fm(pel)} мм.`:'');
+ const sdp=gnum('ob_sdp'),afi=gnum('ob_afi');
+ d+=`\n\nОКОЛОПЛОДНЫЕ ВОДЫ: ${sdp?`вертикальный карман ${fm(sdp)} мм`:''}${sdp&&afi?', ':''}${afi?`ИАЖ ${fm(afi)} мм`:''}${!sdp&&!afi?'количество ___':''}.`;
+ const pl=gsel('ob_pl'),os=gnum('ob_os'),osRaw=$('ob_os')?$('ob_os').value.trim():'',plt=gnum('ob_plt'),cv=gsel('ob_cv'),nk=gsel('ob_nk');
+ const os0=osRaw!==''&&parseFloat(osRaw.replace(',','.'))===0;
+ d+=`\n\nПЛАЦЕНТА: расположена ${['по передней стенке','по задней стенке','в дне','по правой боковой стенке','по левой боковой стенке'][pl]} матки`+(os0?', перекрывает внутренний зев':os?`, нижний край в ${fm(os)} мм от внутреннего зева`:'')+(plt?`, толщина ${fm(plt)} мм`:'')+'. Структура без особенностей.';
+ d+=`\nПУПОВИНА: ${cv?'2 сосуда (единственная артерия пуповины)':'3 сосуда'}. Петли пуповины в области шеи ${['не визуализируются','— однократно','— многократно'][nk]}.`;
+ const ua=gnum('ob_ua'),mca=gnum('ob_mca'),cx=gnum('ob_cx');let u=null;
+ if(ua||mca){u=ua&&est?uaCent(ua,est):null;d+=`\n\nДОППЛЕРОМЕТРИЯ: `+[ua?`ПИ артерии пуповины ${f(ua,2)}${u?` (${pcTxt(u.c)} перцентиль, INTERGROWTH-21st)`:''}`:'',mca?`ПИ СМА ${f(mca,2)}`:'',ua&&mca?`ЦПО ${f(mca/ua,2)}`:''].filter(x=>x).join(', ')+'.'}
+ if(cx)d+=`\n\nШЕЙКА МАТКИ (трансвагинально): длина ${fm(cx)} мм.`;
+ // заключение
+ K.push(`Беременность ${w?`${fm(w)} нед. ${fm(dd)} дн.`:'___ нед.'} ${twin?'Двойня':'Один живой плод'}, ${PR[pr]}.`);
+ const sga=band==='<3'||band==='<10'||(acc!=null&&acc<10);
+ if(comb&&est!=null){const dif=Math.round((comb-est)*7);
+  if(Math.abs(dif)<=7&&!sga)K.push(`Фетометрия соответствует сроку${efw?`, ПМП ${Math.round(efw)} г`:''}.`);
+  else if(Math.abs(dif)<=7)K.push(`Срок по фетометрии ${gaWD(comb)}${efw?`, ПМП ${Math.round(efw)} г`:''}.`);
+  else K.push(`Фетометрические показатели ${dif<0?'меньше':'больше'} установленного срока на ${Math.abs(dif)} дн.${efw?` ПМП ${Math.round(efw)} г.`:''}`)}
+ else if(efw)K.push(`ПМП ${Math.round(efw)} г.`);
+ const uaHi0=!!(ua0&&est&&uaCent(ua0,est)&&uaCent(ua0,est).c>95);
+ if(band==='<3'||(acc!=null&&acc<3)){K.push('ПМП/ОЖ < 3-го перцентиля — эхографические признаки ЗРП (критерии Delphi). Консультация акушера-гинеколога.');F.b('ПМП/ОЖ < 3-го перцентиля')}
+ else if(sga&&uaHi0){K.push(`ПМП/ОЖ < 10-го перцентиля в сочетании с ПИ артерии пуповины > 95-го перцентиля — эхографические признаки ${est<32?'ранней':'поздней'} ЗРП (критерии Delphi). Консультация акушера-гинеколога.`);F.b('ЗРП по Delphi')}
+ else if(sga){K.push('ПМП/ОЖ < 10-го перцентиля — малый для гестационного возраста плод; оценить по критериям ЗРП (допплерометрия, динамика).');F.w('ПМП/ОЖ < 10-го перцентиля')}
+ else if(band==='>90'){K.push('Крупный для срока плод (ПМП > 90-го перцентиля).');F.w('ПМП > 90-го перцентиля')}
+ if(hr&&(hr<110||hr>160)){K.push(`${hr<110?'Брадикардия':'Тахикардия'} плода (${fm(hr)} уд/мин).`);F.b(`ЧСС ${fm(hr)}`)}
+ if(mv)F.w('Сниженная двигательная активность');
+ if(pr&&w>=36){K.push(`${PR[pr][0].toUpperCase()+PR[pr].slice(1)} плода в ${fm(w)} нед.`);F.w('Неголовное предлежание ≥ 36 нед.')}
+ if(an===2){K.push('Выявлены изменения анатомии плода — ___. Рекомендовано экспертное УЗИ.');F.b('Изменения анатомии')}
+ if(pel&&est){const lo=est>=28?7:4,hi=est>=28?10:7;if(pel>=hi){K.push(`Расширение лоханки почки плода ${fm(pel)} мм (UTD A2–3).`);F.b(`Лоханка ${fm(pel)} мм`)}else if(pel>=lo){K.push(`Пиелоэктазия плода ${fm(pel)} мм (UTD A1).`);F.w(`Лоханка ${fm(pel)} мм`)}}
+ const oligo=(sdp&&sdp<20)||(afi&&afi<=50),poly=(sdp&&sdp>=80)||(afi&&afi>=250);
+ if(oligo){K.push('Маловодие.');F.b('Маловодие')}else if(poly){K.push('Многоводие.');F.w('Многоводие')}
+ if(os0||(os&&os<0)){K.push('Предлежание плаценты.');F.b('Предлежание плаценты')}
+ else if(os&&os<20){K.push(`Низкое расположение плаценты (${fm(os)} мм от внутреннего зева)${w&&w<32?' — контроль в 32 нед.':''}.`);F.w('Низкая плацентация')}
+ if(cv){K.push('Единственная артерия пуповины.');F.w('ЕАП')}
+ if(nk===2)F.w('Многократное обвитие пуповиной');
+ if(u&&u.c>95){K.push(`ПИ артерии пуповины > 95-го перцентиля (${f(ua,2)}).`);F.b('ПИ АП > 95-го перцентиля')}
+ if(ua&&mca&&mca/ua<1){K.push(`ЦПО ${f(mca/ua,2)} — снижено.`);F.b(`ЦПО ${f(mca/ua,2)} (< 1)`)}
+ if(cx&&cx<25&&(!w||w<=24)){K.push(`Укорочение шейки матки до ${fm(cx)} мм. Консультация акушера-гинеколога.`);F.b(`Шейка ${fm(cx)} мм`)}
+ return {title:'УЛЬТРАЗВУКОВОЕ ИССЛЕДОВАНИЕ ПРИ БЕРЕМЕННОСТИ (II–III ТРИМЕСТР)',d,norm:''};
+}},
+
 'Органы брюшной полости':{
 form:()=>B('Печень',N('l_r','Правая доля КВР, мм','≤150')+N('l_l','Левая доля, толщина (ПЗР), мм','≤60')+N('l_pv','Воротная вена, мм','≤13')+N('l_cbd','Холедох, мм','≤6')+S('l_echo','Эхогенность',['обычная','повышена — I ст.','повышена — II ст.','повышена — III ст.'])+C('l_foc','Очаговое образование')+T('l_seg','Сегмент','S7')+N('l_fs','Размер очага, мм')+S('l_ft','Характер очага',['гиперэхогенный однородный','анэхогенный (киста)','иной структуры']))
  +B('Желчный пузырь',S('gb','Состояние',['без особенностей','удалён','конкременты','сладж','полип(ы)'])+N('gb_l','Длина, мм','≤100')+N('gb_w','Ширина, мм','≤40')+N('gb_wall','Стенка, мм','≤3')+N('gb_s','Наиб. конкремент / полип, мм')
