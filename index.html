@@ -49,7 +49,7 @@ td:first-child{font-weight:600;white-space:nowrap}
 .tablewrap{overflow-x:auto}
 textarea{min-height:320px;font-family:ui-monospace,Consolas,monospace;font-size:13px;line-height:1.45}
 .btn{border:none;background:var(--accent);color:#fff;padding:9px 16px;border-radius:8px;font:inherit;cursor:pointer}
-.vbar{display:flex;align-items:center;gap:10px;margin:10px 0 2px;flex-wrap:wrap}.vst{font-size:13px;color:var(--muted)}#vBtn.rec{background:var(--bad);animation:vp 1.2s infinite}#vBtn:disabled{opacity:.5;cursor:default}@keyframes vp{50%{opacity:.65}}.vlog{font-size:13px;line-height:1.45;margin:2px 0}#vLive{color:var(--muted);font-style:italic}#vHeard{color:var(--muted)}#vDone b{color:var(--accent);font-weight:600}.vfill{box-shadow:0 0 0 3px var(--accent)!important}.vhelp{font-size:13px;margin:4px 0 8px;color:var(--muted)}.vhelp summary{cursor:pointer;color:var(--accent);font-weight:600}
+.vbar{display:flex;align-items:center;gap:10px;margin:10px 0 2px;flex-wrap:wrap}.vst{font-size:13px;color:var(--muted)}#vBtn.rec{background:var(--bad);animation:vp 1.2s infinite}#vBtn:disabled{opacity:.5;cursor:default}@keyframes vp{50%{opacity:.65}}.vtx{display:flex;gap:8px;margin:6px 0 2px}.vtx input{flex:1;min-width:0}.vlog{font-size:13px;line-height:1.45;margin:2px 0}#vLive{color:var(--muted);font-style:italic}#vHeard{color:var(--muted)}#vDone b{color:var(--accent);font-weight:600}.vfill{box-shadow:0 0 0 3px var(--accent)!important}.vhelp{font-size:13px;margin:4px 0 8px;color:var(--muted)}.vhelp summary{cursor:pointer;color:var(--accent);font-weight:600}
 .btn.sec{background:transparent;color:var(--accent);border:1px solid var(--accent)}
 .bar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
 .note{font-size:12px;color:var(--muted);margin-top:6px}
@@ -153,6 +153,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px 16px 30p
       <div><label for="gDate">Дата</label><input id="gDate" type="date"></div>
     </div>
     <div class="vbar"><button class="btn" id="vBtn" type="button">🎤 Диктовать</button><span class="vst" id="vStat"></span></div>
+    <div class="vtx"><input id="vTxt" placeholder="…или продиктуйте сюда микрофоном клавиатуры" enterkeyhint="done"><button class="btn sec" id="vTxtGo" type="button">Разобрать</button></div>
     <div class="vlog"><div id="vLive"></div><div id="vHeard"></div><div id="vDone"></div></div>
     <details class="vhelp"><summary>Как диктовать</summary><div id="vHint" style="margin-top:6px"></div></details>
     <div id="gForm"></div>
@@ -1027,15 +1028,20 @@ const VW={ноль:0,один:1,одна:1,одну:1,два:2,две:2,три:3
 const vIsW=w=>Object.prototype.hasOwnProperty.call(VW,w);
 const vCan=(a,b)=>(a>=100&&b<100)||(a>=20&&a<100&&a%10===0&&b>0&&b<10);
 // текст → нижний регистр, числа словами → цифры, «12 запятая 5» → 12,5
+const VDICT=['холедох','холедоха','воротная','воротной','вирсунгов','вирсунгова','паренхима','паренхимы','селезенка','селезенки','селезеночная','эндометрий','перешеек','перешейка','лоханка','лоханки','конкремент','конкременты','конкремента','стеатоз','гепатоз','протрузия','простата','предстательная','яичник','фолликулов','фолликул','доминантный','остаточная','остаточной','головка','желчный','желчного','щитовидная','миома','субсерозный','субмукозный','интрамуральный','каликопиелоэктазия','пиелоэктазия','аденомиоз','эхогенность','сегменте','толщина','эндометрия','гемангиома','постменопауза','кальцинаты','трансабдоминальный','трансректальный','мочевой','пузырь'];
+const VDSET=new Set(VDICT);
+function vLev(a,b,mx){if(Math.abs(a.length-b.length)>mx)return mx+1;let p=Array.from({length:b.length+1},(_,i)=>i);for(let i=1;i<=a.length;i++){const c=[i];let lo=i;for(let j=1;j<=b.length;j++){c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));lo=Math.min(lo,c[j])}if(lo>mx)return mx+1;p=c}return p[b.length]}
+// исправление похожих по звучанию искажений терминов («холодок» → «холедох»)
+function vFix(w){if(w.length<5||VDSET.has(w)||/\d/.test(w))return w;const mx=w.length<7?1:2;let best=w,bd=mx+1;for(const d of VDICT){if(d[0]!==w[0])continue;const k=vLev(w,d,mx);if(k<bd){bd=k;best=d}}return best}
 function vNorm(s){
  s=s.toLowerCase().replace(/ё/g,'е').replace(/(\d)[.,](\d)/g,'$1#$2').replace(/[.,!?;:«»"()]/g,' ').replace(/#/g,',').replace(/(\d)\s*(?:мм|миллиметр\S*|мл|миллилитр\S*)(?=\s|$)/g,'$1 ').replace(/(\d)[хx×*](\d)/g,'$1 на $2');
  const w=s.split(/\s+/).filter(Boolean),o=[];
  for(let i=0;i<w.length;i++){
   if(w[i]==='полтора'){o.push('1,5');continue}
   if(vIsW(w[i])){let acc=VW[w[i]],last=acc;while(i+1<w.length&&vIsW(w[i+1])&&vCan(last,VW[w[i+1]])){last=VW[w[++i]];acc+=last}o.push(String(acc));continue}
-  o.push(w[i]);
+  o.push(vFix(w[i]));
  }
- return ' '+o.join(' ').replace(/(\d+) (?:запятая|точка|целых) (\d+)/g,'$1,$2').replace(/(\d+) и (\d) десят\S*/g,'$1,$2')+' ';
+ return (' '+o.join(' ')+' ').replace(/\s(?:ка\s+вэ\s+эр|кавээр|кэвээр|к\s+в\s+р)\s/g,' квр ').replace(/\s(?:пэ\s+эс\s+а|пээса|пэса|п\s+с\s+а)\s/g,' пса ').replace(/(\d+) (?:запятая|точка|целых) (\d+)/g,'$1,$2').replace(/(\d+) и (\d) десят\S*/g,'$1,$2');
 }
 const vN='(\\d+(?:,\\d+)?)',vX='\\s*(?:на|х|x|×|\\*)?\\s*',vG='[^\\d]{0,22}?';
 const vR=(kw,n=1)=>new RegExp('(?:^|\\s)'+kw+vG+Array(n).fill(vN).join(vX));
@@ -1137,10 +1143,11 @@ const VHINT={
 'Молочные железы':'«10 день цикла, протоки 2». Образования удобнее заполнять на вкладке BI-RADS.',
 'Предстательная железа':'«трансабдоминальный, простата 45 на 35 на 40, ПСА 3,2, протрузия 6, мочевой пузырь 250, стенка 3, остаточная моча 30».'
 };
-let vRec=null,vOn=false,vErr='',vSide=null;
+let vRec=null,vOn=false,vErr='',vSide=null,vDry=false;
 function vLab(el){const l=document.querySelector(`label[for="${el.id}"]`)||el.closest('label'),g=el.closest('.gblock'),t=g&&g.querySelector('.sub')?g.querySelector('.sub').textContent:'';return (/прав|лев/i.test(t)?t+' · ':'')+(l?l.textContent.trim().replace(/,\s*(?:мм|мл)$/,''):el.id)}
 function vSet(id,val,done){
  const el=$(id);if(!el||val==null)return;
+ if(vDry){done.push(id);return}
  if(el.type==='checkbox'){el.checked=!!val;done.push(vLab(el)+(val?' ✓':' —'))}
  else{el.value=String(val);done.push(vLab(el)+': '+(el.tagName==='SELECT'?el.options[el.selectedIndex].text:val))}
  el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));
@@ -1148,15 +1155,16 @@ function vSet(id,val,done){
 }
 function vApply(raw){
  const t=vNorm(raw),done=[];
- $('vHeard').textContent='Услышано: '+raw.trim();
- if(/^\s*(?:стоп|хватит|остановить|остановись|закончить)(?:\s|$)/.test(t)){vStop();return}
+ if(!vDry)$('vHeard').textContent='Услышано: '+raw.trim();
+ if(/^\s*(?:стоп|хватит|остановить|остановись|закончить)(?:\s|$)/.test(t)){if(vDry)return 50;vStop();return 0}
  const ex=raw.trim().match(/^(?:в\s+)?(описани[ееяю]|заключени[ееяю])[\s:,.—-]+(.+)$/i);
+ if(ex&&vDry)return 50;
  if(ex){const id=/^описан/i.test(ex[1])?'gExtraD':'gExtraC',el=$(id),tx=ex[2].trim();
   el.value=(el.value.trim()?el.value.trim()+' ':'')+tx.charAt(0).toUpperCase()+tx.slice(1)+(/[.!?]$/.test(tx)?'':'.');
-  el.dispatchEvent(new Event('input',{bubbles:true}));vShow([id==='gExtraD'?'Дополнительно → в описание':'Дополнительно → в заключение']);return}
+  el.dispatchEvent(new Event('input',{bubbles:true}));vShow([id==='gExtraD'?'Дополнительно → в описание':'Дополнительно → в заключение']);return 1}
  const os=t.match(/исследовани\S*\s+(брюшн|почк|щитовидн|мал\S*\s+таз|молочн|простат|предстательн)/);
  if(os){const k=[['брюшн','Органы брюшной полости'],['почк','Почки и мочевой пузырь'],['щитовидн','Щитовидная железа'],['мал','Органы малого таза (ТВ)'],['молочн','Молочные железы'],['простат','Предстательная железа'],['предстательн','Предстательная железа']].find(([a])=>os[1].startsWith(a));
-  if(k&&$('gOrgan').value!==k[1]){$('gOrgan').value=k[1];buildGenForm();vSide=null;vHint()}if(k)done.push('Исследование: '+k[1])}
+  if(k&&!vDry&&$('gOrgan').value!==k[1]){$('gOrgan').value=k[1];buildGenForm();vSide=null;vHint()}if(k)done.push('Исследование: '+k[1])}
  const R=VRULES[$('gOrgan').value];
  const parts=t.split(/((?:^|\s)(?:прав\S*|справа|лев\S*|слева)(?=\s))/),chunks=[[parts[0],vSide]];
  for(let i=1;i<parts.length;i+=2){const s=/^\s*(?:прав|справ)/.test(parts[i])?'r':'l';chunks.push([parts[i]+(parts[i+1]||''),s]);vSide=s}
@@ -1166,10 +1174,13 @@ function vApply(raw){
    if(typeof tg==='function'){if(tg(m,s,done)!==false)x=x.replace(m[0],' ')}
    else{if(tg.some(id=>id.includes('{s}'))&&!s)return;tg.forEach((id,i)=>vSet(id.replace('{s}',s),m[i+1],done));x=x.replace(m[0],' ')}});
  });
- vShow(done,raw);
+ if(!vDry)vShow(done,raw);
+ return new Set(done).size;
 }
+function vScore(raw){const sv=vSide;vDry=true;let n=0;try{n=vApply(raw)||0}catch(x){}vDry=false;vSide=sv;return n}
+function vBest(r){let b=r[0].transcript,bn=-1;for(let i=0;i<r.length;i++){const n=vScore(r[i].transcript);if(n>bn){bn=n;b=r[i].transcript}}return b}
 function vShow(done,raw){done=[...new Set(done)];$('vDone').innerHTML=done.length?'Заполнено: '+done.map(x=>`<b>${x}</b>`).join(' · '):`<span class="warn">Не распознано${raw?': «'+raw.trim()+'»':''}. Называйте параметр, затем число.</span>`}
-function vHint(){const h=VHINT[$('gOrgan').value]||'';$('vHint').innerHTML=`Нажмите «Диктовать» и называйте параметр, затем число: ${h}<br>Свободный текст: «в описание: …» или «в заключение: …». Смена исследования: «исследование почки». Остановить — «стоп» или кнопка${SR?' (на ПК — клавиша F2)':''}.<br><b>Звук обрабатывается сервисом распознавания браузера (Google/Apple) и требует интернета — не диктуйте ФИО и другие данные пациента.</b>`}
+function vHint(){const h=VHINT[$('gOrgan').value]||'';$('vHint').innerHTML=`Нажмите «Диктовать» и называйте параметр, затем число, с небольшими паузами между параметрами: ${h}<br>Свободный текст: «в описание: …» или «в заключение: …». Смена исследования: «исследование почки». Остановить — «стоп» или кнопка${SR?' (на ПК — клавиша F2)':''}.<br>Если кнопка распознаёт плохо — нажмите в поле «…или продиктуйте сюда» и диктуйте микрофоном клавиатуры (Gboard / диктовка iPhone), затем «Разобрать»: распознавание клавиатуры часто точнее.<br><b>Звук обрабатывается сервисом распознавания браузера (Google/Apple) и требует интернета — не диктуйте ФИО и другие данные пациента.</b>`}
 function vUI(){const b=$('vBtn');
  if(!SR){b.disabled=true;b.textContent='🎤 Недоступно';$('vStat').textContent='Голосовой ввод не поддерживается этим браузером — откройте помощник в Chrome, Edge или Safari';return}
  b.textContent=vOn?'⏹ Остановить':'🎤 Диктовать';b.classList.toggle('rec',vOn);
@@ -1180,8 +1191,9 @@ function vStart(){
  if(!SR)return;
  if(!navigator.onLine){vErr='Голосовой ввод требует интернета';vUI();return}
  vErr='';vSide=null;
- vRec=new SR();vRec.lang='ru-RU';vRec.continuous=true;vRec.interimResults=true;vRec.maxAlternatives=1;
- vRec.onresult=e=>{let im='';for(let i=e.resultIndex;i<e.results.length;i++){const r=e.results[i];if(r.isFinal)vApply(r[0].transcript);else im+=r[0].transcript}$('vLive').textContent=im?'… '+im:''};
+ const andr=/android/i.test(navigator.userAgent);
+ vRec=new SR();vRec.lang='ru-RU';vRec.continuous=!andr;vRec.interimResults=true;vRec.maxAlternatives=5;
+ vRec.onresult=e=>{let im='';for(let i=e.resultIndex;i<e.results.length;i++){const r=e.results[i];if(r.isFinal)vApply(vBest(r));else im+=r[0].transcript}$('vLive').textContent=im?'… '+im:''};
  vRec.onerror=e=>{const ios=/iphone|ipad|ipod/i.test(navigator.userAgent),sa=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
   const M={'not-allowed':'Нет доступа к микрофону — разрешите микрофон для этого сайта в настройках браузера','service-not-allowed':ios&&sa?'На iPhone голосовой ввод работает при открытии помощника в Safari, а не с ярлыка на экране':'Распознавание речи недоступно в этом браузере','network':'Нет связи с сервисом распознавания — нужен интернет','audio-capture':'Микрофон не найден','language-not-supported':'Русский язык не поддерживается распознаванием в этом браузере'};
   if(M[e.error]){vErr=M[e.error];vOn=false;vUI()}};
@@ -1190,6 +1202,8 @@ function vStart(){
 }
 function vStop(){vOn=false;try{vRec&&vRec.stop()}catch(x){}vUI()}
 $('vBtn').onclick=()=>vOn?vStop():vStart();
+const vTxtGo=()=>{const el=$('vTxt'),v=el.value.trim();if(!v)return;vApply(v.replace(/[;\n]+/g,' '));el.value=''};
+$('vTxtGo').onclick=vTxtGo;$('vTxt').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();vTxtGo()}});
 $('gOrgan').addEventListener('change',()=>{vSide=null;vHint()});
 document.addEventListener('keydown',e=>{if(e.key==='F2'&&SR){e.preventDefault();document.querySelector('nav button[data-tab="gen"]').click();vOn?vStop():vStart()}});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&vOn)vStop()});
