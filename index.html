@@ -39,7 +39,9 @@ input,select,textarea{width:100%;padding:8px 9px;border:1px solid var(--line);bo
 .row2{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:8px}
 .sub{font-size:13px;font-weight:600;margin:8px 0 4px}
 .res{margin-top:8px;padding:10px;border-radius:8px;background:var(--accent-soft);font-size:14px;min-height:20px}
-.ok{color:var(--ok);font-weight:600}.warn{color:var(--warn);font-weight:600}.bad{color:var(--bad);font-weight:600}
+.ok{color:var(--ok);font-weight:600}.inwarn{border-color:var(--bad)!important;outline:2px solid var(--bad);outline-offset:-1px}
+.inmsg{font-size:12.5px;color:var(--bad);margin:3px 0 2px;line-height:1.3}
+.warn{color:var(--warn);font-weight:600}.bad{color:var(--bad);font-weight:600}
 .chk{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--text);margin:3px 0}
 .chk input{width:auto}
 table{width:100%;border-collapse:collapse;font-size:14px}
@@ -174,6 +176,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px 16px 30p
       <div><label for="gDate">Дата</label><input id="gDate" type="date"></div>
     </div>
     <div class="vbar"><button class="btn" id="vBtn" type="button">🎤 Диктовать</button><span class="vst" id="vStat"></span></div>
+    <div class="note" style="margin:4px 0 6px">🔒 Голос распознаётся через интернет (Google/Apple) — не диктуйте ФИО и данные пациента.</div>
     <div class="vtx"><input id="vTxt" placeholder="…или продиктуйте сюда микрофоном клавиатуры" enterkeyhint="done"><button class="btn sec" id="vTxtGo" type="button">Разобрать</button></div>
     <div class="vlog"><div id="vLive"></div><div id="vHeard"></div><div id="vDone"></div></div>
     <details class="vhelp"><summary>Как диктовать</summary><div id="vHint" style="margin-top:6px"></div></details>
@@ -183,7 +186,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px 16px 30p
       <label for="gExtraC" style="margin-top:6px">В заключение</label><textarea id="gExtraC" style="min-height:54px;font-family:inherit"></textarea>
     </div>
     <div class="bar"><button class="btn sec" id="gClear">Очистить форму</button></div>
-    <div class="note">Пустые поля остаются в тексте как «___». Пороги: ACR TI-RADS 2017; полипы ЖП — ESGAR 2022; PCOM — международное руководство по СПКЯ 2023; стеатоз — классическая УЗ-градация I–III.</div>
+    <div class="note"><b>Типовые фразы нормы вписываются автоматически</b> — перед копированием убедитесь, что всё перечисленное в протоколе действительно осмотрено. Пустые поля остаются в тексте как «___». Пороги: ACR TI-RADS 2017; полипы ЖП — ESGAR 2022; PCOM — международное руководство по СПКЯ 2023; стеатоз — классическая УЗ-градация I–III.</div>
   </div>
   <div class="card outcard">
     <h3>Протокол</h3>
@@ -311,7 +314,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px 16px 30p
 <section class="tab" id="birads">
 <div class="grid">
   <div class="card">
-    <h3>BI-RADS — УЗИ молочных желёз (ACR BI-RADS Manual v2025)</h3>
+    <h3>BI-RADS — УЗИ молочных желёз (лексикон ACR BI-RADS v2025)</h3>
     <label for="bType">Находка</label>
     <select id="bType">
       <optgroup label="Норма / типично доброкачественные">
@@ -364,6 +367,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px 16px 30p
       <label class="chk" id="bStableW"><input type="checkbox" id="bStable"> Стабильно ≥ 2 лет (по прежним исследованиям)</label>
     </div>
     <label class="chk"><input type="checkbox" id="bAx"> Подозрительные подмышечные лимфоузлы</label>
+    <div id="bFinW"><label for="bFin">Итоговая категория (решает врач)</label><select id="bFin"><option value="">— ориентир по числу признаков —</option><option>3</option><option>4A</option><option>4B</option><option>4C</option><option>5</option></select></div>
   </div>
   <div class="card">
     <h3>Результат</h3>
@@ -406,8 +410,10 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px 16px 30p
     <input id="lmp" type="date">
     <label style="margin-top:8px">Дата исследования</label>
     <input id="lmpDate" type="date">
+    <label for="lmpC" style="margin-top:8px">Длительность цикла, дней</label>
+    <input id="lmpC" inputmode="numeric" placeholder="28">
     <div class="res" id="lmpRes">Укажите дату</div>
-    <div class="note">ПДР = ДПМ + 280 дней (правило Негеле) при регулярном 28-дневном цикле.</div>
+    <div class="note">ПДР = ДПМ + 280 дней (правило Негеле); при регулярном цикле иной длительности — поправка ± (цикл − 28) дней. При нерегулярном цикле срок устанавливают по КТР.</div>
   </div>
   <div class="card">
     <h3>Срок по предыдущему УЗИ</h3>
@@ -447,6 +453,36 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px 16px 30p
     <div class="bar"><button class="btn sec" id="hCopy">Копировать в протокол</button></div>
     <div class="note">Срок — Hadlock 1984; ПМП — Hadlock 1985 (по доступным параметрам); перцентиль ПМП — Hadlock 1991 (Radiology 181:129), интерполяция между неделями, 10–40 нед. Перцентиль считается только от установленного срока, не от срока по фетометрии. ЗРП — консенсус Delphi (Gordijn 2016, ISUOG 2020): кроме ПМП учитываются ОЖ, допплерометрия и динамика.</div>
   </div>
+  <div class="card">
+    <h3>Околоплодные воды</h3>
+    <div class="sub">ИАЖ — 4 квадранта, мм</div>
+    <div class="row" style="grid-template-columns:repeat(4,1fr)"><input id="afiQ1" inputmode="decimal" placeholder="1"><input id="afiQ2" inputmode="decimal" placeholder="2"><input id="afiQ3" inputmode="decimal" placeholder="3"><input id="afiQ4" inputmode="decimal" placeholder="4"></div>
+    <label for="sdp" style="margin-top:8px">Наибольший вертикальный карман, мм</label>
+    <input id="sdp" inputmode="decimal" placeholder="напр. 45">
+    <div class="res" id="afiRes">Введите ИАЖ и/или карман</div>
+    <div class="note">Маловодие: карман &lt; 20 мм или ИАЖ ≤ 50 мм. Многоводие: карман ≥ 80 мм или ИАЖ ≥ 250 мм; степень по карману 80–110 / 120–150 / ≥ 160 мм (по ИАЖ 250–299 / 300–349 / ≥ 350 мм). Для диагноза маловодия предпочтителен карман — по ИАЖ гипердиагностика и лишние вмешательства (SMFM, Cochrane). Пороги — с 20–24 нед.</div>
+  </div>
+  <div class="card">
+    <h3>Длина шейки матки (ТВ)</h3>
+    <label for="cxL">Длина закрытой части цервикального канала, мм</label>
+    <input id="cxL" inputmode="decimal" placeholder="напр. 32">
+    <label for="cxW" style="margin-top:8px">Срок, недель</label>
+    <input id="cxW" inputmode="numeric" placeholder="напр. 20">
+    <label class="chk"><input type="checkbox" id="cxF"> Воронкообразное расширение внутреннего зева</label>
+    <div class="res" id="cxRes">Введите длину шейки</div>
+    <div class="note">Только трансвагинальное измерение, пустой мочевой пузырь, кратчайшее из 3 измерений. Пороги для одноплодной беременности 16–24 нед.: &lt; 25 мм — короткая шейка; ≤ 20 мм — показание обсудить вагинальный прогестерон (ACOG/SMFM, FIGO); ≤ 10 мм — очень высокий риск преждевременных родов. Воронка без укорочения самостоятельного значения не имеет.</div>
+  </div>
+  <div class="card">
+    <h3>Пиелоэктазия плода (UTD 2014)</h3>
+    <label for="fPel">ПЗР лоханки, мм (поперечный срез)</label>
+    <input id="fPel" inputmode="decimal" placeholder="напр. 6">
+    <label for="fPelW" style="margin-top:8px">Срок, недель</label>
+    <input id="fPelW" inputmode="numeric" placeholder="напр. 22">
+    <label class="chk"><input type="checkbox" id="fPelC"> Расширение периферических чашечек</label>
+    <label class="chk"><input type="checkbox" id="fPelX"> Изменения паренхимы, мочеточника или мочевого пузыря; маловодие неясного генеза</label>
+    <div class="res" id="fPelRes">Введите размер лоханки</div>
+    <div class="note">UTD (Nguyen 2014): 16–27 нед. — норма &lt; 4 мм, A1 4–&lt; 7 мм, A2–3 ≥ 7 мм; ≥ 28 нед. — норма &lt; 7 мм, A1 7–&lt; 10 мм, A2–3 ≥ 10 мм. Расширение периферических чашечек, изменения паренхимы, мочеточника, мочевого пузыря или маловодие переводят в A2–3 при любом размере.</div>
+  </div>
 </div>
 </section>
 
@@ -481,11 +517,38 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px 16px 30p
 <details class="card" style="margin-top:12px"><summary style="cursor:pointer;font-weight:600">Источники</summary><ol style="margin:8px 0 0;padding-left:20px;font-size:13px;line-height:1.5"><li>Tessler FN и др. ACR TI-RADS: White Paper. J Am Coll Radiol 2017;14:587–595. <a href="https://pubmed.ncbi.nlm.nih.gov/28372962/" target="_blank" rel="noopener">PubMed</a></li><li>Strachowski LM и др. O-RADS US v2022. Radiology 2023;308(3):e230685. <a href="https://pubmed.ncbi.nlm.nih.gov/37698472/" target="_blank" rel="noopener">PubMed</a></li><li>ACR BI-RADS Manual v2025 (лексикон УЗИ, категории оценки). <a href="https://www.acr.org/Clinical-Resources/Reporting-and-Data-Systems/Bi-Rads" target="_blank" rel="noopener">acr.org</a></li><li>Foley KG и др. Полипы желчного пузыря: рекомендации ESGAR и др. Eur Radiol 2022;32:3358–3368. <a href="https://pubmed.ncbi.nlm.nih.gov/34918177/" target="_blank" rel="noopener">PubMed</a></li><li>Teede HJ и др. Международное руководство по СПКЯ 2023. Hum Reprod 2023;38:1655–1679. <a href="https://pubmed.ncbi.nlm.nih.gov/37580037/" target="_blank" rel="noopener">PubMed</a></li><li>Brunn J и др. Объём долей щитовидной железы (коэффициент 0,479). Dtsch Med Wochenschr 1981;106:1338–1340. <a href="https://pubmed.ncbi.nlm.nih.gov/7274082/" target="_blank" rel="noopener">PubMed</a></li><li>Robinson HP, Fleming JE. Срок по КТР. Br J Obstet Gynaecol 1975;82:702–710. <a href="https://pubmed.ncbi.nlm.nih.gov/1182090/" target="_blank" rel="noopener">PubMed</a></li><li>Salomon LJ и др. ISUOG: УЗИ в I триместре (датировка). Ultrasound Obstet Gynecol 2013;41:102–113. <a href="https://pubmed.ncbi.nlm.nih.gov/23280739/" target="_blank" rel="noopener">PubMed</a></li><li>ACOG Committee Opinion 700. Методы расчёта ПДР. Obstet Gynecol 2017;129:e150–e154. <a href="https://pubmed.ncbi.nlm.nih.gov/28426621/" target="_blank" rel="noopener">PubMed</a></li><li>Hadlock FP и др. Срок по фетометрии. Radiology 1984;152:497–501. <a href="https://pubmed.ncbi.nlm.nih.gov/6739822/" target="_blank" rel="noopener">PubMed</a></li><li>Hadlock FP и др. Расчёт ПМП. Am J Obstet Gynecol 1985;151:333–337. <a href="https://pubmed.ncbi.nlm.nih.gov/3881966/" target="_blank" rel="noopener">PubMed</a></li><li>Hadlock FP и др. Перцентили ПМП. Radiology 1991;181:129–133. <a href="https://pubmed.ncbi.nlm.nih.gov/1887021/" target="_blank" rel="noopener">PubMed</a></li><li>Gordijn SJ и др. Консенсус Delphi по ЗРП. Ultrasound Obstet Gynecol 2016;48:333–339. <a href="https://pubmed.ncbi.nlm.nih.gov/26909664/" target="_blank" rel="noopener">PubMed</a></li><li>Lees CC и др. ISUOG: ЗРП. Ultrasound Obstet Gynecol 2020;56:298–312. <a href="https://pubmed.ncbi.nlm.nih.gov/32738107/" target="_blank" rel="noopener">PubMed</a></li><li>Touboul PJ и др. Mannheim: КИМ и бляшка. Cerebrovasc Dis 2012;34:290–296. <a href="https://pubmed.ncbi.nlm.nih.gov/23128470/" target="_blank" rel="noopener">PubMed</a></li><li>Konuş OL и др. Размеры печени, селезёнки и почек у детей. AJR 1998;171:1693–1698. <a href="https://pubmed.ncbi.nlm.nih.gov/9843315/" target="_blank" rel="noopener">PubMed</a></li><li>Obrycki Ł и др. Длина почек у детей 0–19 лет (многоцентровое исследование). Pediatr Nephrol 2022;37:1075–1085. <a href="https://pubmed.ncbi.nlm.nih.gov/34657197/" target="_blank" rel="noopener">PubMed</a></li><li>Zimmermann MB и др. (WHO/ICCIDD). Объём щитовидной железы у детей 6–12 лет. Am J Clin Nutr 2004;79:231–237. <a href="https://pubmed.ncbi.nlm.nih.gov/14749228/" target="_blank" rel="noopener">PubMed</a></li><li>Hernanz-Schulman M и др. Холедох у детей. Radiology 1995;195:193–195. <a href="https://pubmed.ncbi.nlm.nih.gov/7892467/" target="_blank" rel="noopener">PubMed</a></li><li>Hernanz-Schulman M. Гипертрофический пилоростеноз. Radiology 2003;227:319–331. <a href="https://pubmed.ncbi.nlm.nih.gov/12637675/" target="_blank" rel="noopener">PubMed</a></li><li>Nguyen HT и др. Классификация UTD. J Pediatr Urol 2014;10:982–998. <a href="https://pubmed.ncbi.nlm.nih.gov/25435247/" target="_blank" rel="noopener">PubMed</a></li><li>Austin PF и др. ICCS: терминология функции нижних мочевых путей у детей. Neurourol Urodyn 2016;35:471–481. <a href="https://pubmed.ncbi.nlm.nih.gov/25772695/" target="_blank" rel="noopener">PubMed</a></li></ol><div class="note">Ориентировочные нормы органов (вкладка «Нормы») — сводные значения из отечественных и зарубежных руководств по УЗ-диагностике; при расхождении опирайтесь на нормативы вашего учреждения.</div></details>
 </main>
 <button class="jump" id="gJump">К протоколу ↓</button>
-<footer>Автор: Жумагулов Н. М., врач ультразвуковой диагностики · АДЦ «Сономедплюс», г. Ош<br><a href="https://www.instagram.com/jumagulovnm/" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600;text-decoration:none">Instagram @jumagulovnm</a><br>Справочный инструмент для специалистов. Не заменяет клиническое решение врача.</footer>
+<footer>Автор: Жумагулов Н. М., врач ультразвуковой диагностики · АДЦ «Сономедплюс», г. Ош<br><a href="https://www.instagram.com/jumagulovnm/" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600;text-decoration:none">Instagram @jumagulovnm</a><br>Справочный инструмент для специалистов. Не заменяет клиническое решение врача.<br><span style="opacity:.75">Версия 2.0 · обновлено 07.11.2026</span></footer>
 
 <script>
 const $=id=>document.getElementById(id);
 const num=id=>{const v=parseFloat(String($(id).value).replace(',','.'));return isFinite(v)&&v>0?v:null};
+// ===== ПРОВЕРКА ПРАВДОПОДОБИЯ ВВЕДЁННЫХ ЗНАЧЕНИЙ =====
+const RNG={tr1:[3,100],tr2:[2,60],tr3:[2,60],tl1:[3,100],tl2:[2,60],tl3:[2,60],p1:[10,150],p2:[10,150],p3:[10,150],psa:[0,500],
+ b1:[10,250],b2:[10,250],b3:[10,250],r1:[3,200],r2:[3,200],r3:[3,200],o1:[5,250],o2:[5,250],o3:[5,250],e1:[1,400],e2:[1,400],e3:[1,400],
+ tSize:[2,100],oSize:[5,400],bs1:[2,150],bs2:[2,150],bs3:[2,150],bNip:[0,250],bClock:[1,12],crl:[1,100],puW:[4,42],puD:[0,6],hW:[4,43],hD:[0,6],
+ hBPD:[10,115],hHC:[40,420],hAC:[40,450],hFL:[5,85],kY:[0,18],kM:[0,11],kH:[40,210],kW:[1,200],kKr:[20,160],kKl:[20,160],kLiv:[40,220],kSpl:[20,200],kCbd:[0,15],kPel:[0,80],kTv:[0.1,50],
+ l_r:[60,250],l_l:[20,120],l_pv:[4,30],l_cbd:[1,30],kr_l:[30,200],kl_l:[30,200],kr_w:[15,120],kl_w:[15,120],kr_p:[3,40],kl_p:[3,40],
+ t_r1:[10,100],t_r2:[3,60],t_r3:[3,60],t_l1:[10,100],t_l2:[3,60],t_l3:[3,60],t_is:[0,30],pr1:[10,150],pr2:[10,150],pr3:[10,150],
+ afiQ1:[0,150],afiQ2:[0,150],afiQ3:[0,150],afiQ4:[0,150],sdp:[0,200],cxL:[2,70],cxW:[4,42],fPel:[0,60],fPelW:[14,42],lmpC:[20,60]};
+function rngMsg(el){
+ const r=RNG[el.id];let lim=r;
+ if(!lim){const lb=document.querySelector(`label[for="${el.id}"]`);if(lb&&/мм/.test(lb.textContent))lim=[0.3,400];else return null}
+ const raw=String(el.value).trim();if(raw==='')return null;
+ const v=parseFloat(raw.replace(',','.'));
+ if(isNaN(v))return 'Не число';
+ if(v<lim[0]||v>lim[1]){
+  if(v<lim[0]&&v*10>=lim[0]&&v*10<=lim[1])return `Похоже на сантиметры — введите в миллиметрах (${f(v*10,0)} мм?)`;
+  return `Необычное значение (ожидается ${f(lim[0],lim[0]%1?1:0)}–${lim[1]}). Проверьте ввод и единицы.`}
+ return null}
+function rngCheck(el){
+ if(!el||el.tagName!=='INPUT'||el.type==='checkbox'||el.type==='date'||!el.id)return;
+ const m=rngMsg(el),anc=el.closest('.row,.row2')||el;let box=$('m_'+el.id);
+ el.classList.toggle('inwarn',!!m);
+ if(m){if(!box){box=document.createElement('div');box.className='inmsg';box.id='m_'+el.id;anc.insertAdjacentElement('afterend',box)}box.textContent='⚠ '+m}
+ else if(box)box.remove();
+}
+function outR(ids){return ids.some(id=>$(id)&&rngMsg($(id)))}
+document.addEventListener('input',e=>rngCheck(e.target),true);
 const v3=(ids,k)=>{const a=ids.map(num);return a.every(x=>x)?a[0]*a[1]*a[2]*k/1000:null};
 const f=(x,d=1)=>x.toFixed(d).replace('.',',');
 
@@ -562,8 +625,9 @@ function calcCRL(){
 }
 function calcLMP(){
   const l=parseD('lmp'); if(!l){$('lmpRes').textContent='Укажите дату';return}
-  const ex=parseD('lmpDate')||today(), days=(ex-l)/864e5, edd=new Date(l.getTime()+280*864e5);
-  $('lmpRes').innerHTML=days<0?'<span class="warn">Дата исследования раньше ДПМ</span>':`Срок на дату исследования: <b>${ga(days)}</b><br>ПДР: <b>${fmtD(edd)}</b>`;
+  const cy=parseInt($('lmpC').value)||28, adj=cy>=20&&cy<=60?cy-28:0;
+  const ex=parseD('lmpDate')||today(), days=(ex-l)/864e5-adj, edd=new Date(l.getTime()+(280+adj)*864e5);
+  $('lmpRes').innerHTML=days<0?'<span class="warn">Дата исследования раньше ДПМ</span>':`Срок на дату исследования: <b>${ga(days)}</b><br>ПДР: <b>${fmtD(edd)}</b>`+(adj?`<br><span class="note" style="margin:0">С поправкой на цикл ${cy} дн. (${adj>0?'+':''}${adj} дн.)</span>`:'');
 }
 // общий вывод: срок на дату исследования (дни от условной ДПМ) + ПДР
 function gaOut(gaDays,ex){
@@ -614,6 +678,7 @@ let hText='';
 function calcH(){
   const mm=id=>{const v=num(id);return v?v/10:null};
   const b=mm('hBPD'),h=mm('hHC'),a=mm('hAC'),fl=mm('hFL');
+  if(outR(['hBPD','hHC','hAC','hFL','hW','hD'])){$('hRes').innerHTML='<span class="bad">Есть значения вне допустимого диапазона — исправьте отмеченные поля. Расчёт не выполнен.</span>';hText='';return}
   if(!b&&!h&&!a&&!fl){$('hRes').textContent='Введите размеры';hText='';return}
   const {one,comb}=hadlockGA(b,h,a,fl);
   let s='<b>Срок по фетометрии:</b><br>'+Object.entries(one).filter(([k,v])=>v).map(([k,v])=>`${k}: ${gaWD(v)}`).join('; ');
@@ -872,6 +937,7 @@ gen(F,K){
 
 'Почки и мочевой пузырь':{
 form:()=>['r','l'].map(s=>B(s==='r'?'Правая почка':'Левая почка',N(`k${s}_l`,'Длина, мм','100–120')+N(`k${s}_w`,'Ширина, мм','50–60')+N(`k${s}_p`,'Паренхима, мм','15–25')+S(`k${s}_c`,'ЧЛС',['не расширена','пиелоэктазия','каликопиелоэктазия'])+N(`k${s}_pel`,'Лоханка, мм')+C(`k${s}_st`,'Конкремент(ы)')+N(`k${s}_ss`,'Наиб. конкремент, мм')+C(`k${s}_cy`,'Простая киста')+N(`k${s}_cs`,'Киста, мм'))).join('')
+ +B('Дополнительно',S('k_cdk','ЦДК',['кровоток до капсулы','не проводилось','изменения — описать'])+S('k_adr','Надпочечниковые области',['без особенностей','не визуализируются','образование — описать']))
  +B('Мочевой пузырь',N('bl_v','Объём, мл')+N('bl_w','Стенка, мм','≤3')+N('bl_r','Остаточная моча, мл','≤50')),
 gen(F,K){
  let d='';const L={};
@@ -892,7 +958,8 @@ gen(F,K){
   if(cy)K.push(`Простая киста ${G} ${fm(cs)} мм.`);
  });
  if(L.r&&L.l&&Math.abs(L.r-L.l)>20)F.w(`Разница длины почек ${fm(Math.abs(L.r-L.l))} мм (> 20)`);
- d+='При ЦДК кровоток прослеживается до капсулы с обеих сторон.\n\nНАДПОЧЕЧНИКОВЫЕ ОБЛАСТИ: без особенностей.\n\n';
+ d+=['При ЦДК кровоток прослеживается до капсулы с обеих сторон.\n\n','','При ЦДК: ___.\n\n'][gsel('k_cdk')]+'НАДПОЧЕЧНИКОВЫЕ ОБЛАСТИ: '+['без особенностей.','не визуализируются.','___.'][gsel('k_adr')]+'\n\n';
+ if(gsel('k_adr')===2){K.push('Образование надпочечниковой области — ___.');F.b('Надпочечниковая область: образование')}
  const bv=gnum('bl_v'),bw=gnum('bl_w'),br=gnum('bl_r');
  d+=`МОЧЕВОЙ ПУЗЫРЬ: наполнен достаточно, объём ${fm(bv)} мл. Стенка ${fm(bw)} мм${bw>3?' — утолщена':', ровная'}. Содержимое однородное. Остаточная моча ${fm(br)} мл.`;
  const resHigh=br!=null&&(br>50||(bv&&br/bv>0.1));
@@ -903,7 +970,7 @@ gen(F,K){
 
 'Щитовидная железа':{
 form:()=>B('Размеры',S('t_sex','Пол',['женский (≤ 18 мл)','мужской (≤ 25 мл)'])+N('t_r1','Пр. доля Д, мм')+N('t_r2','Пр. доля Ш, мм')+N('t_r3','Пр. доля Т, мм')+N('t_l1','Лев. доля Д, мм')+N('t_l2','Лев. доля Ш, мм')+N('t_l3','Лев. доля Т, мм')+N('t_is','Перешеек, мм','≤5'))
- +B('Структура',S('t_e','Паренхима',['однородная, обычной эхогенности','диффузно неоднородная, сниженной эхогенности','диффузно неоднородная, повышенной эхогенности'])+S('t_v','Васкуляризация (ЦДК)',['не усилена','диффузно усилена'])+C('t_ln','Изменённые лимфоузлы шеи'))
+ +B('Структура',S('t_e','Паренхима',['однородная, обычной эхогенности','диффузно неоднородная, сниженной эхогенности','диффузно неоднородная, повышенной эхогенности'])+S('t_v','Васкуляризация (ЦДК)',['не усилена','диффузно усилена','ЦДК не проводилось'])+C('t_ln','Изменённые лимфоузлы шеи'))
  +[1,2,3].map(i=>B(`Узел ${i}`,S(`t_n${i}`,'Локализация',['— нет —','правая доля','левая доля','перешеек'])+N(`t_ns${i}`,'Макс. размер, мм')+S(`t_nt${i}`,'ACR TI-RADS',['—','TR1','TR2','TR3','TR4','TR5']))).join('')
  +'<div class="note">Категорию узла можно посчитать на вкладке TI-RADS.</div>',
 gen(F,K){
@@ -915,9 +982,9 @@ gen(F,K){
  const LOC=['','правой доли','левой доли','перешейка'];
  if(nodes.length)nodes.forEach((n,i)=>{d+=`\nУзел ${i+1} — ${LOC[n.loc]}: максимальный размер ${fm(n.sz)} мм${n.tr?`, ACR TI-RADS TR${n.tr}`:''}. Описание: ___.`;});
  else d+='Очаговых образований не выявлено.';
- d+=`\nПри ЦДК васкуляризация ${v?'диффузно усилена':'не усилена'}.\nРегионарные лимфатические узлы шеи ${gchk('t_ln')?'изменены: ___.':'не увеличены, структура сохранена.'}`;
+ d+=`${v===2?'':`\nПри ЦДК васкуляризация ${v?'диффузно усилена':'не усилена'}.`}\nРегионарные лимфатические узлы шеи ${gchk('t_ln')?'изменены: ___.':'не увеличены, структура сохранена.'}`;
  if(tot&&tot>lim){K.push(`Увеличение объёма щитовидной железы (${f(tot)} мл).`);F.w(`Объём ${f(tot)} мл (> ${lim})`)}
- if(e||v){K.push('Эхографические признаки диффузных изменений щитовидной железы — рекомендовано определение ТТГ и АТ-ТПО.');F.w('Диффузные изменения паренхимы')}
+ if(e||v===1){K.push('Эхографические признаки диффузных изменений щитовидной железы — рекомендовано определение ТТГ и АТ-ТПО.');F.w('Диффузные изменения паренхимы')}
  nodes.forEach(n=>{const rec=trTxt(n.tr,n.sz);
   K.push(`Узловое образование ${LOC[n.loc]} ${fm(n.sz)} мм${n.tr?`, ACR TI-RADS TR${n.tr} — ${rec}`:' — категория TI-RADS: ___'}.`);
   const fl=`Узел ${LOC[n.loc]} ${fm(n.sz)} мм${n.tr?' TR'+n.tr:''}${rec?' → '+rec:''}`;
@@ -998,7 +1065,7 @@ gen(F,K){
 }},
 
 'Предстательная железа':{
-form:()=>B('Простата',S('pr_a','Доступ',['трансабдоминальный','трансректальный'])+N('pr1','Поперечный, мм')+N('pr2','ПЗР, мм')+N('pr3','Продольный, мм')+N('pr_psa','ПСА общ., нг/мл')+S('pr_e','Структура',['однородная','неоднородная (узловая гиперплазия)'])+N('pr_ipp','Протрузия в МП, мм')+C('pr_c','Кальцинаты'))
+form:()=>B('Простата',S('pr_a','Доступ',['трансабдоминальный','трансректальный'])+N('pr1','Поперечный, мм')+N('pr2','ПЗР, мм')+N('pr3','Продольный, мм')+N('pr_psa','ПСА общ., нг/мл')+S('pr_e','Структура',['однородная','неоднородная (узловая гиперплазия)'])+N('pr_ipp','Протрузия в МП, мм')+C('pr_c','Кальцинаты')+S('pr_sv','Семенные пузырьки',['не расширены, симметричны','не визуализируются','изменены — описать']))
  +B('Мочевой пузырь',N('pb_v','Объём, мл')+N('pb_w','Стенка, мм','≤3')+N('pb_r','Остаточная моча, мл','≤50')),
 gen(F,K){
  const a=gnum('pr1'),b=gnum('pr2'),c=gnum('pr3'),v=vol3(a,b,c,0.523),psa=gnum('pr_psa'),e=gsel('pr_e'),ipp=gnum('pr_ipp'),cal=gchk('pr_c');
@@ -1006,7 +1073,7 @@ gen(F,K){
  d+=e?'Структура неоднородная за счёт узловой гиперплазии переходной зоны.':'Паренхима однородная, эхогенность обычная. Очаговых изменений не выявлено.';
  if(cal)d+=' Определяются мелкие гиперэхогенные включения (кальцинаты).';
  if(ipp)d+=` Интравезикальная протрузия ${fm(ipp)} мм.`;
- d+='\nСеменные пузырьки не расширены, симметричны.\n\n';
+ d+='\nСеменные пузырьки '+['не расширены, симметричны.','не визуализируются.','___.'][gsel('pr_sv')]+'\n\n';
  const bv=gnum('pb_v'),bw=gnum('pb_w'),br=gnum('pb_r');
  d+=`МОЧЕВОЙ ПУЗЫРЬ: объём ${fm(bv)} мл, стенка ${fm(bw)} мм${bw>3?' — утолщена':''}. Остаточная моча ${fm(br)} мл.`;
  if(v>30){K.push(`Эхографические признаки доброкачественной гиперплазии предстательной железы (объём ${f(v)} см³).`);F.w(`Объём простаты ${f(v)} см³ (> 30)`)}
@@ -1332,6 +1399,7 @@ function calcBR(){
   else{if(n<1)n=1;cat=n>=5?'5':n>=3?'4C':n===2?'4B':'4A'}
   if(t==='mixed'&&!why.length)why.push('смешанное солидно-кистозное строение');
   if(t==='nml'&&!why.length)why.push('немассовое поражение');}
+ let sug=null;if(les&&$('bFin').value){sug=cat;cat=$('bFin').value;why.unshift('категория выбрана врачом')}
  let axUp=false;if($('bAx').checked&&t!=='known'&&!inc&&['1','2','3'].includes(cat)){why.push('подозрительные подмышечные лимфоузлы');cat='4A';axUp=true}
  const key=t==='inc_img'?'0a':t==='inc_prior'?'0b':cat;
  let rec=axUp?'биопсия изменённого подмышечного лимфоузла под УЗ-контролем, маммография':BREC[key];
@@ -1339,7 +1407,9 @@ function calcBR(){
  if(t==='micro'&&cat==='2'&&!axUp)rec+='; при новой находке или в постменопаузе — рассмотреть биопсию';
  if(t==='ccyst'&&cat==='3'&&!axUp)rec+='; альтернатива — аспирация';
  const cls=['1','2'].includes(cat)?'ok':cat==='3'||cat==='0'?'warn':'bad';
- $('brRes').innerHTML=`<span class="${cls}" style="font-size:17px">BI-RADS ${cat}</span> — ${BRISK[key].replace(/</g,'&lt;')}`+(why.length?`<br>Признаки: ${why.join(', ')}`:'')+`<br>Тактика: ${rec}.`;
+ show('bFinW',les);
+ const hint=!les?'':sug?`<br><span class="note" style="margin:0">Ориентир по числу признаков был: ${sug}</span>`:'<br><span class="warn">Это ориентир по числу признаков, а не правило ACR: в BI-RADS категория ставится по общему впечатлению. Подтвердите её в поле «Итоговая категория».</span>';
+ $('brRes').innerHTML=`<span class="${cls}" style="font-size:17px">BI-RADS ${cat}</span> — ${BRISK[key].replace(/</g,'&lt;')}`+(why.length?`<br>Признаки: ${why.join(', ')}`:'')+`<br>Тактика: ${rec}.`+hint;
  const side=+$('bSide').value?'левой':'правой',clk=$('bClock').value.trim(),nip=num('bNip');
  const loc=`В ${side} молочной железе${clk?` на ${clk} ч`:' на ___ ч'}${nip?`, в ${fm(nip)} мм от соска,`:','}`;
  const sz=['bs1','bs2','bs3'].map(num).filter(x=>x).map(fm).join(' × ')||'___';
@@ -1458,7 +1528,49 @@ function renderKidNorms(){
 $('nAd').onclick=()=>{$('nAd').classList.add('active');$('nKd').classList.remove('active');$('nAdult').style.display='';$('nKidW').style.display='none'};
 $('nKd').onclick=()=>{$('nKd').classList.add('active');$('nAd').classList.remove('active');$('nAdult').style.display='none';$('nKidW').style.display=''};
 renderKidNorms();
-function recalc(){calcKid();calcThy();calcPr();calcB();calcO();calcE();calcT();calcCRL();calcLMP();calcPU();calcIVF();calcH()}
+function calcAFI(){
+ const n0=id=>{const t=String($(id).value).trim();if(t==='')return null;const v=parseFloat(t.replace(',','.'));return isFinite(v)&&v>=0?v:null};
+ const q=['afiQ1','afiQ2','afiQ3','afiQ4'].map(n0),qn=q.filter(x=>x!=null),sd=num('sdp');
+ if(!qn.length&&!sd){$('afiRes').textContent='Введите ИАЖ и/или карман';return}
+ if(outR(['afiQ1','afiQ2','afiQ3','afiQ4','sdp'])){$('afiRes').innerHTML='<span class="bad">Исправьте отмеченные поля</span>';return}
+ const out=[];
+ if(qn.length===4){const a=qn.reduce((x,y)=>x+y,0);let t,c;
+  if(a<=50){t='маловодие';c='bad'}else if(a<80){t='ниже среднего (пограничный)';c='warn'}else if(a<250){t='норма';c='ok'}
+  else if(a<300){t='многоводие лёгкой степени';c='warn'}else if(a<350){t='многоводие средней степени';c='bad'}else{t='многоводие тяжёлой степени';c='bad'}
+  out.push(`ИАЖ: <b>${fm(a)} мм</b> (${f(a/10)} см) — <span class="${c}">${t}</span>`)}
+ else if(qn.length)out.push('<span class="note" style="margin:0">Для ИАЖ заполните все 4 квадранта</span>');
+ if(sd){let t,c;if(sd<20){t='маловодие';c='bad'}else if(sd<80){t='норма';c='ok'}else if(sd<120){t='многоводие лёгкой степени';c='warn'}else if(sd<160){t='многоводие средней степени';c='bad'}else{t='многоводие тяжёлой степени';c='bad'}
+  out.push(`Вертикальный карман: <b>${fm(sd)} мм</b> — <span class="${c}">${t}</span>`)}
+ $('afiRes').innerHTML=out.join('<br>');
+}
+function calcCx(){
+ const L=num('cxL'),w=num('cxW'),fun=$('cxF').checked;
+ if(!L){$('cxRes').textContent='Введите длину шейки';return}
+ if(outR(['cxL','cxW'])){$('cxRes').innerHTML='<span class="bad">Исправьте отмеченные поля</span>';return}
+ let t,c;
+ if(L<=10){t='очень короткая шейка — очень высокий риск преждевременных родов';c='bad'}
+ else if(L<=20){t='короткая шейка (≤ 20 мм) — обсудить вагинальный прогестерон; консультация акушера-гинеколога';c='bad'}
+ else if(L<25){t='короткая шейка (&lt; 25 мм) — повышенный риск преждевременных родов; консультация акушера-гинеколога';c='warn'}
+ else{t='не укорочена';c='ok'}
+ let s=`Длина шейки: <b>${fm(L)} мм</b> — <span class="${c}">${t}</span>`;
+ if(fun)s+='<br>Воронкообразное расширение внутреннего зева'+(L>=25?' — при нормальной длине самостоятельного значения не имеет':'');
+ if(w&&(w<16||w>24))s+=`<br><span class="warn">Пороги определены для 16–24 нед.; на ${fm(w)} нед. интерпретируйте с осторожностью</span>`;
+ $('cxRes').innerHTML=s;
+}
+function calcFPel(){
+ const p=num('fPel'),w=num('fPelW'),cal=$('fPelC').checked,x=$('fPelX').checked;
+ if(p==null||isNaN(p)){$('fPelRes').textContent='Введите размер лоханки';return}
+ if(!w){$('fPelRes').innerHTML='<span class="warn">Укажите срок — пороги зависят от срока</span>';return}
+ if(outR(['fPel','fPelW'])){$('fPelRes').innerHTML='<span class="bad">Исправьте отмеченные поля</span>';return}
+ if(w<16){$('fPelRes').innerHTML='<span class="warn">Классификация UTD применяется с 16 нед.</span>';return}
+ const late=w>=28,lo=late?7:4,hi=late?10:7;
+ let cat,c,rec;
+ if(cal||x||p>=hi){cat='UTD A2–3 (повышенный риск)';c='bad';rec='контрольное УЗИ через 4–6 нед.; консультация детского уролога/нефролога пренатально; УЗИ новорождённого через 48 ч – 1 мес'}
+ else if(p>=lo){cat='UTD A1 (низкий риск)';c='warn';rec=late?'УЗИ новорождённого через 48 ч – 1 мес. и повторно через 1–6 мес':'контрольное УЗИ в ≥ 32 нед.; при сохранении — УЗИ новорождённого через 48 ч – 1 мес. и через 1–6 мес'}
+ else{cat='норма';c='ok';rec='дополнительного наблюдения не требуется'}
+ $('fPelRes').innerHTML=`Лоханка ${fm(p)} мм на ${fm(w)} нед. (порог ${lo} мм) — <span class="${c}">${cat}</span><br>Тактика: ${rec}.`;
+}
+function recalc(){calcAFI();calcCx();calcFPel();calcKid();calcThy();calcPr();calcB();calcO();calcE();calcT();calcCRL();calcLMP();calcPU();calcIVF();calcH()}
 document.addEventListener('input',e=>{if(e.target.id==='nSearch')renderNorms();else if(e.target.id!=='tplText')recalc()});
 document.addEventListener('change',e=>{if(e.target.tagName!=='TEXTAREA')recalc()});
 $('crlDate').value=$('lmpDate').value=$('puNow').value=$('ivfNow').value=toInput(today());
@@ -1476,6 +1588,7 @@ if(/iphone|ipad|ipod/i.test(navigator.userAgent)&&!standalone&&!iosHid)$('iosHin
 $('iosClose').onclick=e=>{e.preventDefault();$('iosHint').style.display='none';try{localStorage.setItem('iosHintHidden','1')}catch(e){}};
 const netBadge=()=>$('offBadge').style.display=navigator.onLine?'none':'inline-block';
 addEventListener('online',netBadge);addEventListener('offline',netBadge);netBadge();
+
 </script>
 </body>
 </html>
