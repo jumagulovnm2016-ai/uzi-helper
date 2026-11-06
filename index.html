@@ -49,6 +49,7 @@ td:first-child{font-weight:600;white-space:nowrap}
 .tablewrap{overflow-x:auto}
 textarea{min-height:320px;font-family:ui-monospace,Consolas,monospace;font-size:13px;line-height:1.45}
 .btn{border:none;background:var(--accent);color:#fff;padding:9px 16px;border-radius:8px;font:inherit;cursor:pointer}
+.vbar{display:flex;align-items:center;gap:10px;margin:10px 0 2px;flex-wrap:wrap}.vst{font-size:13px;color:var(--muted)}#vBtn.rec{background:var(--bad);animation:vp 1.2s infinite}#vBtn:disabled{opacity:.5;cursor:default}@keyframes vp{50%{opacity:.65}}.vlog{font-size:13px;line-height:1.45;margin:2px 0}#vLive{color:var(--muted);font-style:italic}#vHeard{color:var(--muted)}#vDone b{color:var(--accent);font-weight:600}.vfill{box-shadow:0 0 0 3px var(--accent)!important}.vhelp{font-size:13px;margin:4px 0 8px;color:var(--muted)}.vhelp summary{cursor:pointer;color:var(--accent);font-weight:600}
 .btn.sec{background:transparent;color:var(--accent);border:1px solid var(--accent)}
 .bar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
 .note{font-size:12px;color:var(--muted);margin-top:6px}
@@ -151,6 +152,9 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px 16px 30p
       <div><label for="gOrgan">Исследование</label><select id="gOrgan"></select></div>
       <div><label for="gDate">Дата</label><input id="gDate" type="date"></div>
     </div>
+    <div class="vbar"><button class="btn" id="vBtn" type="button">🎤 Диктовать</button><span class="vst" id="vStat"></span></div>
+    <div class="vlog"><div id="vLive"></div><div id="vHeard"></div><div id="vDone"></div></div>
+    <details class="vhelp"><summary>Как диктовать</summary><div id="vHint" style="margin-top:6px"></div></details>
     <div id="gForm"></div>
     <div class="gblock"><div class="sub">Дополнительно (своими словами)</div>
       <label for="gExtraD">В описание</label><textarea id="gExtraD" style="min-height:54px;font-family:inherit"></textarea>
@@ -168,7 +172,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px 16px 30p
       <button class="btn" id="gCopy">Копировать</button>
       <button class="btn sec" id="gRebuild">Пересобрать</button>
     </div>
-    <div class="note">Текст — черновик для врача: проверьте его перед внесением в протокол. Данные пациента никуда не отправляются и не сохраняются.</div>
+    <div class="note">Текст — черновик для врача: проверьте его перед внесением в протокол. Данные пациента никуда не отправляются и не сохраняются (кроме звука при голосовом вводе — он идёт в сервис распознавания браузера).</div>
   </div>
 </div>
 </section>
@@ -1016,6 +1020,180 @@ $('gClear').onclick=()=>{$('gExtraD').value=$('gExtraC').value='';buildGenForm()
 $('gCopy').onclick=async()=>{const t=$('genOut');try{await navigator.clipboard.writeText(t.value)}catch(e){t.select();document.execCommand('copy')}
  const b=$('gCopy');b.textContent='Скопировано ✓';setTimeout(()=>b.textContent='Копировать',1500)};
 buildGenForm();
+
+// ===== ГОЛОСОВОЙ ВВОД (Web Speech API: Chrome / Edge / Safari) =====
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+const VW={ноль:0,один:1,одна:1,одну:1,два:2,две:2,три:3,четыре:4,пять:5,шесть:6,семь:7,восемь:8,девять:9,десять:10,одиннадцать:11,двенадцать:12,тринадцать:13,четырнадцать:14,пятнадцать:15,шестнадцать:16,семнадцать:17,восемнадцать:18,девятнадцать:19,двадцать:20,тридцать:30,сорок:40,пятьдесят:50,шестьдесят:60,семьдесят:70,восемьдесят:80,девяносто:90,сто:100,двести:200,триста:300,четыреста:400,пятьсот:500,шестьсот:600,семьсот:700,восемьсот:800,девятьсот:900};
+const vIsW=w=>Object.prototype.hasOwnProperty.call(VW,w);
+const vCan=(a,b)=>(a>=100&&b<100)||(a>=20&&a<100&&a%10===0&&b>0&&b<10);
+// текст → нижний регистр, числа словами → цифры, «12 запятая 5» → 12,5
+function vNorm(s){
+ s=s.toLowerCase().replace(/ё/g,'е').replace(/(\d)[.,](\d)/g,'$1#$2').replace(/[.,!?;:«»"()]/g,' ').replace(/#/g,',').replace(/(\d)\s*(?:мм|миллиметр\S*|мл|миллилитр\S*)(?=\s|$)/g,'$1 ').replace(/(\d)[хx×*](\d)/g,'$1 на $2');
+ const w=s.split(/\s+/).filter(Boolean),o=[];
+ for(let i=0;i<w.length;i++){
+  if(w[i]==='полтора'){o.push('1,5');continue}
+  if(vIsW(w[i])){let acc=VW[w[i]],last=acc;while(i+1<w.length&&vIsW(w[i+1])&&vCan(last,VW[w[i+1]])){last=VW[w[++i]];acc+=last}o.push(String(acc));continue}
+  o.push(w[i]);
+ }
+ return ' '+o.join(' ').replace(/(\d+) (?:запятая|точка|целых) (\d+)/g,'$1,$2').replace(/(\d+) и (\d) десят\S*/g,'$1,$2')+' ';
+}
+const vN='(\\d+(?:,\\d+)?)',vX='\\s*(?:на|х|x|×|\\*)?\\s*',vG='[^\\d]{0,22}?';
+const vR=(kw,n=1)=>new RegExp('(?:^|\\s)'+kw+vG+Array(n).fill(vN).join(vX));
+const vNeg=m=>/(?:^|\s)(?:нет|без|не\s+выявлен|отсутств)/.test(m[0]);
+const VFL=(re,fn)=>[re,fn],VRU=(re,t)=>[re,t];
+const VRULES={
+'Органы брюшной полости':{flags:[
+  VFL(/удален/,(m,s,d)=>vSet('gb',1,d)),
+  VFL(/(?:конкремент|камн|камен)/,(m,s,d)=>vSet('gb',2,d)),
+  VFL(/(?:сладж|взвес)/,(m,s,d)=>vSet('gb',3,d)),
+  VFL(/полип/,(m,s,d)=>vSet('gb',4,d)),
+  VFL(/(?:нет\s+|не\s+выявлен\S*\s+|без\s+)?свободн\S*\s+жидкост\S*(?:\s+нет|\s+не\s+выявлен\S*|\s+отсутств\S*)?/,(m,s,d)=>vSet('ab_fl',!vNeg(m),d)),
+  VFL(/поджелудочн\S*[^\d]{0,30}?(повышен|снижен|неоднородн)/,(m,s,d)=>vSet('p_e',m[1]==='повышен'?1:2,d)),
+  VFL(/гемангиом/,(m,s,d)=>vSet('l_ft',0,d)),
+  VFL(/кист\S*\s+печен/,(m,s,d)=>vSet('l_ft',1,d)),
+ ],rules:[
+  VRU(/(?:стеатоз|гепатоз)\S*(?:\s+(?:([1-3])|(перв|втор|трет)\S*))?(?:\s+степен\S*)?/,(m,s,d)=>{vSet('l_echo',m[1]?+m[1]:m[2]?{перв:1,втор:2,трет:3}[m[2]]:1,d)}),
+  VRU(/сегмент\S*\s*(?:s|с|эс)?\s*([1-8])(?!\d)/,(m,s,d)=>{vSet('l_foc',true,d);vSet('l_seg','S'+m[1],d)}),
+  VRU(vR('(?:очаг\\S*|гемангиом\\S*|образовани\\S*)'),(m,s,d)=>{vSet('l_foc',true,d);vSet('l_fs',m[1],d)}),
+  VRU(vR('(?:прав\\S*\\s+дол\\S*|квр)'),['l_r']),
+  VRU(vR('лев\\S*\\s+дол\\S*'),['l_l']),
+  VRU(vR('селезеночн\\S*\\s+вен\\S*'),['s_v']),
+  VRU(vR('воротн\\S*(?:\\s+вен\\S*)?'),['l_pv']),
+  VRU(vR('холедох\\S*'),['l_cbd']),
+  VRU(vR('желчн\\S*(?:\\s+пузыр\\S*)?',2),['gb_l','gb_w']),
+  VRU(vR('стенк\\S*(?:\\s+желчн\\S*(?:\\s+пузыр\\S*)?)?'),['gb_wall']),
+  VRU(vR('(?:конкремент\\S*|камн\\S*|камен\\S*|полип\\S*)'),['gb_s']),
+  VRU(vR('головк\\S*'),['p_h']),
+  VRU(vR('тел[оа]м?'),['p_b']),
+  VRU(vR('хвост(?:а|ом)?'),['p_t']),
+  VRU(vR('(?:вирсунг\\S*|панкреатическ\\S*\\s+проток\\S*|проток\\S*)'),['p_w']),
+  VRU(vR('селезенк\\S*',2),['s_l','s_t']),
+  VRU(vR('селезенк\\S*'),['s_l']),
+  VRU(vR('толщин\\S*\\s+селезенк\\S*'),['s_t']),
+  VRU(vR('аорт\\S*'),['ao']),
+ ]},
+'Почки и мочевой пузырь':{flags:[
+  VFL(/каликопиелоэктаз/,(m,s,d)=>s&&vSet(`k${s}_c`,2,d)),
+  VFL(/(?:^|\s)пиелоэктаз/,(m,s,d)=>s&&vSet(`k${s}_c`,1,d)),
+ ],rules:[
+  VRU(vR('остаточн\\S*(?:\\s+моч\\S*)?'),['bl_r']),
+  VRU(vR('(?:мочев\\S*\\s+пузыр\\S*|объем\\S*)'),['bl_v']),
+  VRU(vR('стенк\\S*'),['bl_w']),
+  VRU(vR('(?:почк\\S*|размер\\S*)',2),['k{s}_l','k{s}_w']),
+  VRU(vR('(?:почк\\S*|длин\\S*)'),['k{s}_l']),
+  VRU(vR('паренхим\\S*'),['k{s}_p']),
+  VRU(vR('лоханк\\S*'),(m,s,d)=>{if(!s)return false;vSet(`k${s}_pel`,m[1],d);if($(`k${s}_c`)&&+$(`k${s}_c`).value===0)vSet(`k${s}_c`,1,d)}),
+  VRU(vR('(?:конкремент\\S*|камн\\S*|камен\\S*)'),(m,s,d)=>{if(!s)return false;vSet(`k${s}_st`,true,d);vSet(`k${s}_ss`,m[1],d)}),
+  VRU(vR('кист\\S*'),(m,s,d)=>{if(!s)return false;vSet(`k${s}_cy`,true,d);vSet(`k${s}_cs`,m[1],d)}),
+ ]},
+'Щитовидная железа':{flags:[
+  VFL(/мужчин|мужск/,(m,s,d)=>vSet('t_sex',1,d)),
+  VFL(/женщин|женск/,(m,s,d)=>vSet('t_sex',0,d)),
+  VFL(/(?:васкуляриз|кровоток)\S*[^\d]{0,20}?усилен/,(m,s,d)=>vSet('t_v',1,d)),
+ ],rules:[
+  VRU(vR('(?:перешеек|перешейк)\\S*'),['t_is']),
+  VRU(new RegExp(vN+vX+vN+vX+vN),['t_{s}1','t_{s}2','t_{s}3']),
+  VRU(vR('длин\\S*'),['t_{s}1']),VRU(vR('ширин\\S*'),['t_{s}2']),VRU(vR('толщин\\S*'),['t_{s}3']),
+ ]},
+'Органы малого таза (ТВ)':{flags:[
+  VFL(/постменопауз/,(m,s,d)=>vSet('m_meno',true,d)),
+  VFL(/аденомиоз/,(m,s,d)=>vSet('m_ad',true,d)),
+  VFL(/интрамурал/,(m,s,d)=>vSet('m_myt',0,d)),VFL(/субсероз/,(m,s,d)=>vSet('m_myt',1,d)),VFL(/субмукоз/,(m,s,d)=>vSet('m_myt',2,d)),
+  VFL(/(?:нет\s+|не\s+выявлен\S*\s+|без\s+)?(?:незначительн\S*\s+|умерен\S*\s+|значительн\S*\s+)?(?:количеств\S*\s+)?свободн\S*\s+жидкост\S*(?:\s+нет|\s+не\s+выявлен\S*|\s+отсутств\S*|\s+\S*\s*(?:незначительн|умерен|значительн)\S*)?/,(m,s,d)=>vSet('m_fl',vNeg(m)?0:/умерен|(?:^|\s)значительн/.test(m[0])?2:1,d)),
+ ],rules:[
+  VRU(/(?:день\s+цикла|дмц)\s*(\d+)|(\d+)(?:\s*-?\s*й)?\s+день\s+цикла/,(m,s,d)=>{vSet('m_dmc',m[1]||m[2],d)}),
+  VRU(vR('матк\\S*',3),['m_l','m_ap','m_w']),
+  VRU(vR('эндометри[йяюе]'),['m_en']),
+  VRU(vR('(?:миом\\S*|узел|узл\\S*)'),(m,s,d)=>{vSet('m_my',true,d);vSet('m_mys',m[1],d)}),
+  VRU(vR('доминант\\S*(?:\\s+фоллик\\S*)?'),(m,s,d)=>{if(!s)return false;vSet(`o${s}x`,1,d);vSet(`o${s}s`,m[1],d)}),
+  VRU(vR('желт\\S*\\s+тел\\S*'),(m,s,d)=>{if(!s)return false;vSet(`o${s}x`,2,d);vSet(`o${s}s`,m[1],d)}),
+  VRU(vR('кист\\S*'),(m,s,d)=>{if(!s)return false;vSet(`o${s}x`,3,d);vSet(`o${s}s`,m[1],d)}),
+  VRU(vR('яичник\\S*',3),['o{s}1','o{s}2','o{s}3']),
+  VRU(new RegExp('(?:^|\\s)'+vN+'\\s+фоллик'),['o{s}f']),
+  VRU(vR('фоллик\\S*'),['o{s}f']),
+ ]},
+'Молочные железы':{flags:[],rules:[
+  VRU(/(?:день\s+цикла|дмц)\s*(\d+)|(\d+)(?:\s*-?\s*й)?\s+день\s+цикла/,(m,s,d)=>{vSet('mb_dmc',m[1]||m[2],d)}),
+  VRU(vR('проток\\S*'),['mb_duct']),
+ ]},
+'Предстательная железа':{flags:[
+  VFL(/трансректальн/,(m,s,d)=>vSet('pr_a',1,d)),VFL(/трансабдоминальн/,(m,s,d)=>vSet('pr_a',0,d)),
+  VFL(/кальцинат/,(m,s,d)=>vSet('pr_c',true,d)),
+  VFL(/узлов\S*\s+гиперплази|неоднородн/,(m,s,d)=>vSet('pr_e',1,d)),
+ ],rules:[
+  VRU(vR('пса'),['pr_psa']),
+  VRU(vR('протрузи\\S*'),['pr_ipp']),
+  VRU(vR('остаточн\\S*(?:\\s+моч\\S*)?'),['pb_r']),
+  VRU(vR('мочев\\S*\\s+пузыр\\S*'),['pb_v']),
+  VRU(vR('стенк\\S*'),['pb_w']),
+  VRU(vR('(?:простат\\S*|предстательн\\S*(?:\\s+желез\\S*)?|размер\\S*)',3),['pr1','pr2','pr3']),
+ ]},
+};
+const VHINT={
+'Органы брюшной полости':'«правая доля 145, левая доля 58, воротная вена 12, холедох 5, желчный 70 на 30, стенка 2, конкремент 12, головка 28, тело 15, хвост 25, вирсунгов 2, селезёнка 110 на 45, селезёночная вена 7, аорта 20, стеатоз второй степени, свободной жидкости нет». Очаг: «очаг в сегменте 7 размером 15, гемангиома».',
+'Почки и мочевой пузырь':'«правая почка 110 на 50, паренхима 18, лоханка 12, левая почка 108 на 48, паренхима 17, киста 15, мочевой пузырь 300, стенка 3, остаточная моча 20». Сначала называйте сторону — следующие параметры отнесутся к ней.',
+'Щитовидная железа':'«женщина, правая доля 45 на 15 на 14, левая доля 44 на 14 на 13, перешеек 4».',
+'Органы малого таза (ТВ)':'«8 день цикла, матка 52 на 40 на 48, эндометрий 7, правый яичник 30 на 20 на 18, фолликулов 8, доминантный фолликул 18, левый яичник 28 на 18 на 16, свободной жидкости нет». Миома: «субсерозный узел 25».',
+'Молочные железы':'«10 день цикла, протоки 2». Образования удобнее заполнять на вкладке BI-RADS.',
+'Предстательная железа':'«трансабдоминальный, простата 45 на 35 на 40, ПСА 3,2, протрузия 6, мочевой пузырь 250, стенка 3, остаточная моча 30».'
+};
+let vRec=null,vOn=false,vErr='',vSide=null;
+function vLab(el){const l=document.querySelector(`label[for="${el.id}"]`)||el.closest('label'),g=el.closest('.gblock'),t=g&&g.querySelector('.sub')?g.querySelector('.sub').textContent:'';return (/прав|лев/i.test(t)?t+' · ':'')+(l?l.textContent.trim().replace(/,\s*(?:мм|мл)$/,''):el.id)}
+function vSet(id,val,done){
+ const el=$(id);if(!el||val==null)return;
+ if(el.type==='checkbox'){el.checked=!!val;done.push(vLab(el)+(val?' ✓':' —'))}
+ else{el.value=String(val);done.push(vLab(el)+': '+(el.tagName==='SELECT'?el.options[el.selectedIndex].text:val))}
+ el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));
+ el.classList.add('vfill');setTimeout(()=>el.classList.remove('vfill'),1600);
+}
+function vApply(raw){
+ const t=vNorm(raw),done=[];
+ $('vHeard').textContent='Услышано: '+raw.trim();
+ if(/^\s*(?:стоп|хватит|остановить|остановись|закончить)(?:\s|$)/.test(t)){vStop();return}
+ const ex=raw.trim().match(/^(?:в\s+)?(описани[ееяю]|заключени[ееяю])[\s:,.—-]+(.+)$/i);
+ if(ex){const id=/^описан/i.test(ex[1])?'gExtraD':'gExtraC',el=$(id),tx=ex[2].trim();
+  el.value=(el.value.trim()?el.value.trim()+' ':'')+tx.charAt(0).toUpperCase()+tx.slice(1)+(/[.!?]$/.test(tx)?'':'.');
+  el.dispatchEvent(new Event('input',{bubbles:true}));vShow([id==='gExtraD'?'Дополнительно → в описание':'Дополнительно → в заключение']);return}
+ const os=t.match(/исследовани\S*\s+(брюшн|почк|щитовидн|мал\S*\s+таз|молочн|простат|предстательн)/);
+ if(os){const k=[['брюшн','Органы брюшной полости'],['почк','Почки и мочевой пузырь'],['щитовидн','Щитовидная железа'],['мал','Органы малого таза (ТВ)'],['молочн','Молочные железы'],['простат','Предстательная железа'],['предстательн','Предстательная железа']].find(([a])=>os[1].startsWith(a));
+  if(k&&$('gOrgan').value!==k[1]){$('gOrgan').value=k[1];buildGenForm();vSide=null;vHint()}if(k)done.push('Исследование: '+k[1])}
+ const R=VRULES[$('gOrgan').value];
+ const parts=t.split(/((?:^|\s)(?:прав\S*|справа|лев\S*|слева)(?=\s))/),chunks=[[parts[0],vSide]];
+ for(let i=1;i<parts.length;i+=2){const s=/^\s*(?:прав|справ)/.test(parts[i])?'r':'l';chunks.push([parts[i]+(parts[i+1]||''),s]);vSide=s}
+ chunks.forEach(([c,s])=>{let x=' '+c+' ';
+  R.flags.forEach(([re,fn])=>{const m=x.match(re);if(m)fn(m,s,done)});
+  R.rules.forEach(([re,tg])=>{const m=x.match(re);if(!m)return;
+   if(typeof tg==='function'){if(tg(m,s,done)!==false)x=x.replace(m[0],' ')}
+   else{if(tg.some(id=>id.includes('{s}'))&&!s)return;tg.forEach((id,i)=>vSet(id.replace('{s}',s),m[i+1],done));x=x.replace(m[0],' ')}});
+ });
+ vShow(done,raw);
+}
+function vShow(done,raw){done=[...new Set(done)];$('vDone').innerHTML=done.length?'Заполнено: '+done.map(x=>`<b>${x}</b>`).join(' · '):`<span class="warn">Не распознано${raw?': «'+raw.trim()+'»':''}. Называйте параметр, затем число.</span>`}
+function vHint(){const h=VHINT[$('gOrgan').value]||'';$('vHint').innerHTML=`Нажмите «Диктовать» и называйте параметр, затем число: ${h}<br>Свободный текст: «в описание: …» или «в заключение: …». Смена исследования: «исследование почки». Остановить — «стоп» или кнопка${SR?' (на ПК — клавиша F2)':''}.<br><b>Звук обрабатывается сервисом распознавания браузера (Google/Apple) и требует интернета — не диктуйте ФИО и другие данные пациента.</b>`}
+function vUI(){const b=$('vBtn');
+ if(!SR){b.disabled=true;b.textContent='🎤 Недоступно';$('vStat').textContent='Голосовой ввод не поддерживается этим браузером — откройте помощник в Chrome, Edge или Safari';return}
+ b.textContent=vOn?'⏹ Остановить':'🎤 Диктовать';b.classList.toggle('rec',vOn);
+ $('vStat').innerHTML=vOn?'Слушаю… называйте параметр и число':vErr?`<span class="warn">${vErr}</span>`:'';
+ if(!vOn)$('vLive').textContent='';
+}
+function vStart(){
+ if(!SR)return;
+ if(!navigator.onLine){vErr='Голосовой ввод требует интернета';vUI();return}
+ vErr='';vSide=null;
+ vRec=new SR();vRec.lang='ru-RU';vRec.continuous=true;vRec.interimResults=true;vRec.maxAlternatives=1;
+ vRec.onresult=e=>{let im='';for(let i=e.resultIndex;i<e.results.length;i++){const r=e.results[i];if(r.isFinal)vApply(r[0].transcript);else im+=r[0].transcript}$('vLive').textContent=im?'… '+im:''};
+ vRec.onerror=e=>{const ios=/iphone|ipad|ipod/i.test(navigator.userAgent),sa=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+  const M={'not-allowed':'Нет доступа к микрофону — разрешите микрофон для этого сайта в настройках браузера','service-not-allowed':ios&&sa?'На iPhone голосовой ввод работает при открытии помощника в Safari, а не с ярлыка на экране':'Распознавание речи недоступно в этом браузере','network':'Нет связи с сервисом распознавания — нужен интернет','audio-capture':'Микрофон не найден','language-not-supported':'Русский язык не поддерживается распознаванием в этом браузере'};
+  if(M[e.error]){vErr=M[e.error];vOn=false;vUI()}};
+ vRec.onend=()=>{if(vOn){try{vRec.start()}catch(x){vOn=false;vUI()}}else vUI()};
+ vOn=true;try{vRec.start()}catch(x){vOn=false;vErr='Не удалось включить микрофон'}vUI();
+}
+function vStop(){vOn=false;try{vRec&&vRec.stop()}catch(x){}vUI()}
+$('vBtn').onclick=()=>vOn?vStop():vStart();
+$('gOrgan').addEventListener('change',()=>{vSide=null;vHint()});
+document.addEventListener('keydown',e=>{if(e.key==='F2'&&SR){e.preventDefault();document.querySelector('nav button[data-tab="gen"]').click();vOn?vStop():vStart()}});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&vOn)vStop()});
+vHint();vUI();
 
 // ===== O-RADS =====
 const ORISK={1:'норма',2:'практически наверняка доброкачественное (&lt; 1%)',3:'низкий риск (1–&lt;10%)',4:'промежуточный риск (10–&lt;50%)',5:'высокий риск (≥ 50%)'};
