@@ -49,6 +49,7 @@ td:first-child{font-weight:600;white-space:nowrap}
 .tablewrap{overflow-x:auto}
 textarea{min-height:320px;font-family:ui-monospace,Consolas,monospace;font-size:13px;line-height:1.45}
 .btn{border:none;background:var(--accent);color:#fff;padding:9px 16px;border-radius:8px;font:inherit;cursor:pointer}
+.kr{margin:7px 0;line-height:1.45}.nsw{display:flex;gap:6px;margin-bottom:10px}.nsw button{border:1px solid var(--line);background:transparent;color:var(--text);padding:6px 14px;border-radius:18px;cursor:pointer;font:inherit;font-size:14px}.nsw button.active{background:var(--accent);border-color:var(--accent);color:#fff}
 .vbar{display:flex;align-items:center;gap:10px;margin:10px 0 2px;flex-wrap:wrap}.vst{font-size:13px;color:var(--muted)}#vBtn.rec{background:var(--bad);animation:vp 1.2s infinite}#vBtn:disabled{opacity:.5;cursor:default}@keyframes vp{50%{opacity:.65}}.vtx{display:flex;gap:8px;margin:6px 0 2px}.vtx input{flex:1;min-width:0}.vlog{font-size:13px;line-height:1.45;margin:2px 0}#vLive{color:var(--muted);font-style:italic}#vHeard{color:var(--muted)}#vDone b{color:var(--accent);font-weight:600}.vfill{box-shadow:0 0 0 3px var(--accent)!important}.vhelp{font-size:13px;margin:4px 0 8px;color:var(--muted)}.vhelp summary{cursor:pointer;color:var(--accent);font-weight:600}
 .btn.sec{background:transparent;color:var(--accent);border:1px solid var(--accent)}
 .bar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
@@ -139,6 +140,26 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px 16px 30p
     <div class="row"><input id="e1" inputmode="decimal" placeholder="A"><input id="e2" inputmode="decimal" placeholder="B"><input id="e3" inputmode="decimal" placeholder="C"></div>
     <div class="res" id="eRes">Введите размеры</div>
     <div class="note">V = A×B×C×0,523 (π/6).</div>
+  </div>
+
+  <div class="card">
+    <h3>Ребёнок: нормы по возрасту и росту</h3>
+    <div class="row"><div><label for="kY">Возраст, лет</label><input id="kY" inputmode="numeric" placeholder="5"></div><div><label for="kM">мес</label><input id="kM" inputmode="numeric" placeholder="0"></div><div><label for="kSex">Пол</label><select id="kSex"><option value="m">мальчик</option><option value="f">девочка</option></select></div></div>
+    <div class="row2"><div><label for="kH">Рост, см</label><input id="kH" inputmode="decimal" placeholder="110"></div><div><label for="kW">Вес, кг</label><input id="kW" inputmode="decimal" placeholder="19"></div></div>
+    <div class="sub">Измеренные значения (необязательно)</div>
+    <div class="gg">
+      <div><label for="kKr">Правая почка, мм</label><input id="kKr" inputmode="decimal"></div>
+      <div><label for="kKl">Левая почка, мм</label><input id="kKl" inputmode="decimal"></div>
+      <div><label for="kLiv">Печень, КВР по СКЛ, мм</label><input id="kLiv" inputmode="decimal"></div>
+      <div><label for="kSpl">Селезёнка, длина, мм</label><input id="kSpl" inputmode="decimal"></div>
+      <div><label for="kCbd">Холедох, мм</label><input id="kCbd" inputmode="decimal"></div>
+      <div><label for="kPel">Лоханка, ПЗР, мм</label><input id="kPel" inputmode="decimal"></div>
+      <div><label for="kTv">Щитовидная, объём, мл</label><input id="kTv" inputmode="decimal"></div>
+      <div><label for="kBv">Мочевой пузырь, мл</label><input id="kBv" inputmode="decimal"></div>
+      <div><label for="kPvr">Остаточная моча, мл</label><input id="kPvr" inputmode="decimal"></div>
+    </div>
+    <div class="res" id="kRes">Укажите возраст и/или рост ребёнка</div>
+    <div class="note">Почки — по росту (точнее) и по возрасту/полу; печень и селезёнка — по возрастной группе и по росту. Источники — в конце страницы. Нормы популяционные: решение принимает врач с учётом клиники.</div>
   </div>
 </div>
 </section>
@@ -432,9 +453,13 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px 16px 30p
 <!-- НОРМЫ -->
 <section class="tab" id="norms">
 <div class="card">
+  <div class="nsw"><button class="active" id="nAd" type="button">Взрослые</button><button id="nKd" type="button">Дети</button></div>
+  <div id="nAdult">
   <h3>Ориентировочные нормы у взрослых</h3>
   <input id="nSearch" placeholder="Поиск: печень, холедох, почка…" style="margin-bottom:10px">
   <div class="tablewrap"><table id="nTable"></table></div>
+  </div>
+  <div id="nKidW" style="display:none"><h3>Нормы у детей</h3><div class="note" style="margin-bottom:10px">Оценить конкретного ребёнка по возрасту и росту — на вкладке «Калькуляторы», карточка «Ребёнок».</div><div id="nKids"></div></div>
   <div class="note">Значения ориентировочные; при заключении опирайтесь на нормативы, принятые в вашем учреждении, и клинический контекст.</div>
 </div>
 </section>
@@ -453,7 +478,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px 16px 30p
 </div>
 </section>
 
-<details class="card" style="margin-top:12px"><summary style="cursor:pointer;font-weight:600">Источники</summary><ol style="margin:8px 0 0;padding-left:20px;font-size:13px;line-height:1.5"><li>Tessler FN и др. ACR TI-RADS: White Paper. J Am Coll Radiol 2017;14:587–595. <a href="https://pubmed.ncbi.nlm.nih.gov/28372962/" target="_blank" rel="noopener">PubMed</a></li><li>Strachowski LM и др. O-RADS US v2022. Radiology 2023;308(3):e230685. <a href="https://pubmed.ncbi.nlm.nih.gov/37698472/" target="_blank" rel="noopener">PubMed</a></li><li>ACR BI-RADS Manual v2025 (лексикон УЗИ, категории оценки). <a href="https://www.acr.org/Clinical-Resources/Reporting-and-Data-Systems/Bi-Rads" target="_blank" rel="noopener">acr.org</a></li><li>Foley KG и др. Полипы желчного пузыря: рекомендации ESGAR и др. Eur Radiol 2022;32:3358–3368. <a href="https://pubmed.ncbi.nlm.nih.gov/34918177/" target="_blank" rel="noopener">PubMed</a></li><li>Teede HJ и др. Международное руководство по СПКЯ 2023. Hum Reprod 2023;38:1655–1679. <a href="https://pubmed.ncbi.nlm.nih.gov/37580037/" target="_blank" rel="noopener">PubMed</a></li><li>Brunn J и др. Объём долей щитовидной железы (коэффициент 0,479). Dtsch Med Wochenschr 1981;106:1338–1340. <a href="https://pubmed.ncbi.nlm.nih.gov/7274082/" target="_blank" rel="noopener">PubMed</a></li><li>Robinson HP, Fleming JE. Срок по КТР. Br J Obstet Gynaecol 1975;82:702–710. <a href="https://pubmed.ncbi.nlm.nih.gov/1182090/" target="_blank" rel="noopener">PubMed</a></li><li>Salomon LJ и др. ISUOG: УЗИ в I триместре (датировка). Ultrasound Obstet Gynecol 2013;41:102–113. <a href="https://pubmed.ncbi.nlm.nih.gov/23280739/" target="_blank" rel="noopener">PubMed</a></li><li>ACOG Committee Opinion 700. Методы расчёта ПДР. Obstet Gynecol 2017;129:e150–e154. <a href="https://pubmed.ncbi.nlm.nih.gov/28426621/" target="_blank" rel="noopener">PubMed</a></li><li>Hadlock FP и др. Срок по фетометрии. Radiology 1984;152:497–501. <a href="https://pubmed.ncbi.nlm.nih.gov/6739822/" target="_blank" rel="noopener">PubMed</a></li><li>Hadlock FP и др. Расчёт ПМП. Am J Obstet Gynecol 1985;151:333–337. <a href="https://pubmed.ncbi.nlm.nih.gov/3881966/" target="_blank" rel="noopener">PubMed</a></li><li>Hadlock FP и др. Перцентили ПМП. Radiology 1991;181:129–133. <a href="https://pubmed.ncbi.nlm.nih.gov/1887021/" target="_blank" rel="noopener">PubMed</a></li><li>Gordijn SJ и др. Консенсус Delphi по ЗРП. Ultrasound Obstet Gynecol 2016;48:333–339. <a href="https://pubmed.ncbi.nlm.nih.gov/26909664/" target="_blank" rel="noopener">PubMed</a></li><li>Lees CC и др. ISUOG: ЗРП. Ultrasound Obstet Gynecol 2020;56:298–312. <a href="https://pubmed.ncbi.nlm.nih.gov/32738107/" target="_blank" rel="noopener">PubMed</a></li><li>Touboul PJ и др. Mannheim: КИМ и бляшка. Cerebrovasc Dis 2012;34:290–296. <a href="https://pubmed.ncbi.nlm.nih.gov/23128470/" target="_blank" rel="noopener">PubMed</a></li></ol><div class="note">Ориентировочные нормы органов (вкладка «Нормы») — сводные значения из отечественных и зарубежных руководств по УЗ-диагностике; при расхождении опирайтесь на нормативы вашего учреждения.</div></details>
+<details class="card" style="margin-top:12px"><summary style="cursor:pointer;font-weight:600">Источники</summary><ol style="margin:8px 0 0;padding-left:20px;font-size:13px;line-height:1.5"><li>Tessler FN и др. ACR TI-RADS: White Paper. J Am Coll Radiol 2017;14:587–595. <a href="https://pubmed.ncbi.nlm.nih.gov/28372962/" target="_blank" rel="noopener">PubMed</a></li><li>Strachowski LM и др. O-RADS US v2022. Radiology 2023;308(3):e230685. <a href="https://pubmed.ncbi.nlm.nih.gov/37698472/" target="_blank" rel="noopener">PubMed</a></li><li>ACR BI-RADS Manual v2025 (лексикон УЗИ, категории оценки). <a href="https://www.acr.org/Clinical-Resources/Reporting-and-Data-Systems/Bi-Rads" target="_blank" rel="noopener">acr.org</a></li><li>Foley KG и др. Полипы желчного пузыря: рекомендации ESGAR и др. Eur Radiol 2022;32:3358–3368. <a href="https://pubmed.ncbi.nlm.nih.gov/34918177/" target="_blank" rel="noopener">PubMed</a></li><li>Teede HJ и др. Международное руководство по СПКЯ 2023. Hum Reprod 2023;38:1655–1679. <a href="https://pubmed.ncbi.nlm.nih.gov/37580037/" target="_blank" rel="noopener">PubMed</a></li><li>Brunn J и др. Объём долей щитовидной железы (коэффициент 0,479). Dtsch Med Wochenschr 1981;106:1338–1340. <a href="https://pubmed.ncbi.nlm.nih.gov/7274082/" target="_blank" rel="noopener">PubMed</a></li><li>Robinson HP, Fleming JE. Срок по КТР. Br J Obstet Gynaecol 1975;82:702–710. <a href="https://pubmed.ncbi.nlm.nih.gov/1182090/" target="_blank" rel="noopener">PubMed</a></li><li>Salomon LJ и др. ISUOG: УЗИ в I триместре (датировка). Ultrasound Obstet Gynecol 2013;41:102–113. <a href="https://pubmed.ncbi.nlm.nih.gov/23280739/" target="_blank" rel="noopener">PubMed</a></li><li>ACOG Committee Opinion 700. Методы расчёта ПДР. Obstet Gynecol 2017;129:e150–e154. <a href="https://pubmed.ncbi.nlm.nih.gov/28426621/" target="_blank" rel="noopener">PubMed</a></li><li>Hadlock FP и др. Срок по фетометрии. Radiology 1984;152:497–501. <a href="https://pubmed.ncbi.nlm.nih.gov/6739822/" target="_blank" rel="noopener">PubMed</a></li><li>Hadlock FP и др. Расчёт ПМП. Am J Obstet Gynecol 1985;151:333–337. <a href="https://pubmed.ncbi.nlm.nih.gov/3881966/" target="_blank" rel="noopener">PubMed</a></li><li>Hadlock FP и др. Перцентили ПМП. Radiology 1991;181:129–133. <a href="https://pubmed.ncbi.nlm.nih.gov/1887021/" target="_blank" rel="noopener">PubMed</a></li><li>Gordijn SJ и др. Консенсус Delphi по ЗРП. Ultrasound Obstet Gynecol 2016;48:333–339. <a href="https://pubmed.ncbi.nlm.nih.gov/26909664/" target="_blank" rel="noopener">PubMed</a></li><li>Lees CC и др. ISUOG: ЗРП. Ultrasound Obstet Gynecol 2020;56:298–312. <a href="https://pubmed.ncbi.nlm.nih.gov/32738107/" target="_blank" rel="noopener">PubMed</a></li><li>Touboul PJ и др. Mannheim: КИМ и бляшка. Cerebrovasc Dis 2012;34:290–296. <a href="https://pubmed.ncbi.nlm.nih.gov/23128470/" target="_blank" rel="noopener">PubMed</a></li><li>Konuş OL и др. Размеры печени, селезёнки и почек у детей. AJR 1998;171:1693–1698. <a href="https://pubmed.ncbi.nlm.nih.gov/9843315/" target="_blank" rel="noopener">PubMed</a></li><li>Obrycki Ł и др. Длина почек у детей 0–19 лет (многоцентровое исследование). Pediatr Nephrol 2022;37:1075–1085. <a href="https://pubmed.ncbi.nlm.nih.gov/34657197/" target="_blank" rel="noopener">PubMed</a></li><li>Zimmermann MB и др. (WHO/ICCIDD). Объём щитовидной железы у детей 6–12 лет. Am J Clin Nutr 2004;79:231–237. <a href="https://pubmed.ncbi.nlm.nih.gov/14749228/" target="_blank" rel="noopener">PubMed</a></li><li>Hernanz-Schulman M и др. Холедох у детей. Radiology 1995;195:193–195. <a href="https://pubmed.ncbi.nlm.nih.gov/7892467/" target="_blank" rel="noopener">PubMed</a></li><li>Hernanz-Schulman M. Гипертрофический пилоростеноз. Radiology 2003;227:319–331. <a href="https://pubmed.ncbi.nlm.nih.gov/12637675/" target="_blank" rel="noopener">PubMed</a></li><li>Nguyen HT и др. Классификация UTD. J Pediatr Urol 2014;10:982–998. <a href="https://pubmed.ncbi.nlm.nih.gov/25435247/" target="_blank" rel="noopener">PubMed</a></li><li>Austin PF и др. ICCS: терминология функции нижних мочевых путей у детей. Neurourol Urodyn 2016;35:471–481. <a href="https://pubmed.ncbi.nlm.nih.gov/25772695/" target="_blank" rel="noopener">PubMed</a></li></ol><div class="note">Ориентировочные нормы органов (вкладка «Нормы») — сводные значения из отечественных и зарубежных руководств по УЗ-диагностике; при расхождении опирайтесь на нормативы вашего учреждения.</div></details>
 </main>
 <button class="jump" id="gJump">К протоколу ↓</button>
 <footer>Автор: Жумагулов Н. М., врач ультразвуковой диагностики · АДЦ «Сономедплюс», г. Ош<br><a href="https://www.instagram.com/jumagulovnm/" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600;text-decoration:none">Instagram @jumagulovnm</a><br>Справочный инструмент для специалистов. Не заменяет клиническое решение врача.</footer>
@@ -1347,7 +1372,93 @@ $('bCopy').onclick=async()=>{const t=$('bTxt');try{await navigator.clipboard.wri
  const b=$('bCopy');b.textContent='Скопировано ✓';setTimeout(()=>b.textContent='Копировать',1500)};
 calcBR();
 
-function recalc(){calcThy();calcPr();calcB();calcO();calcE();calcT();calcCRL();calcLMP();calcPU();calcIVF();calcH()}
+// ===== ДЕТИ: нормы по возрасту и росту =====
+// Konuş OL и др. AJR 1998;171:1693 — правая доля печени (КВР по СКЛ) и длина селезёнки, «предлагаемые границы нормы», мм
+// [возраст мес от, до, рост см от, до, печень min, max, селезёнка min, max]
+const KON=[[1,3,47,64,40,90,30,70],[4,6,54,73,45,95,40,75],[7,9,65,78,60,100,45,80],[12,30,71,92,65,105,50,85],[36,59,85,109,65,115,55,95],[60,83,100,130,70,125,60,105],[84,107,110,131,75,130,65,105],[108,131,124,149,75,135,65,110],[132,155,137,153,85,140,75,115],[156,179,143,168,85,140,80,120],[180,200,152,175,95,145,85,120]];
+const KONL=['1–3 мес','4–6 мес','7–9 мес','1–2,5 года','3–5 лет','5–7 лет','7–9 лет','9–11 лет','11–13 лет','13–15 лет','15–16,5 лет'];
+const konLab=r=>KONL[KON.indexOf(r)];
+const konByAge=m=>{let b=KON[0],bd=1e9;KON.forEach(r=>{const d=m<r[0]?r[0]-m:m>r[1]?m-r[1]:0;if(d<bd){bd=d;b=r}});return b};
+const konByH=h=>{let b=KON[0],bd=1e9;KON.forEach(r=>{const d=Math.abs(h-(r[2]+r[3])/2);if(d<bd){bd=d;b=r}});return b};
+// Obrycki M и др. Pediatr Nephrol 2022;37:1075 — длина почки по росту (полосы 5 см от 50 см): [P2.5, P50, P97.5, L, S]
+const OBH=[[42.4,50.4,59,.567,.0844],[44.6,52.9,61.9,.532,.0836],[46.8,55.4,64.8,.498,.0828],[49.4,58.3,68.1,.458,.082],[51.6,60.8,70.9,.423,.0812],[53.8,63.3,73.8,.387,.0804],[55.9,65.7,76.5,.352,.0797],[58.3,68.3,79.4,.312,.0788],[60.3,70.6,82,.276,.0781],[62.5,73,84.7,.237,.0773],[64.5,75.2,87.1,.2,.0765],[66.4,77.2,89.4,.165,.0758],[68.2,79.1,91.6,.131,.0751],[70.3,81.4,94.1,.09,.0743],[72.3,83.5,96.4,.052,.0735],[74.2,85.6,98.8,.015,.0728],[76.2,87.8,101.1,-.022,.0721],[78.2,89.9,103.5,-.058,.0714],[80.3,92.1,105.9,-.093,.0707],[82.5,94.5,108.6,-.131,.07],[84.8,97,111.3,-.168,.0693],[87.2,99.6,114.1,-.207,.0686],[89.5,102.1,116.9,-.243,.068],[91.8,104.5,119.5,-.279,.0673],[94.1,106.9,122.2,-.315,.0667],[96.5,109.5,125,-.353,.066],[98.8,111.9,127.6,-.389,.0654],[101.2,114.5,130.4,-.427,.0647],[103.3,116.8,132.9,-.461,.0641],[105,118.5,134.8,-.486,.0637],[108.3,122,138.6,-.538,.0628]];
+const obIdx=h=>Math.max(0,Math.min(OBH.length-1,Math.floor((h-50)/5)));
+const obHLab=i=>i===OBH.length-1?'≥ 200 см':`${50+i*5}–${54+i*5} см`;
+// по возрасту (годы 0–18) и полу: [P2.5, P50, P97.5]
+const OBA={m:[[51.6,60.1,70.1],[56.3,66,75.6],[60.2,70.7,80.3],[63.7,74.7,84.6],[67,78.4,88.9],[69.8,81.4,92.8],[72.1,83.7,96],[74.2,85.8,99],[76.4,87.9,101.9],[79,90.4,105.2],[81.9,93.2,108.6],[84.8,96.1,111.6],[87.7,99.3,114.5],[90.8,102.8,117.5],[93.6,105.9,120.1],[95.7,108.3,122.2],[97.5,110.4,124.1],[99.2,112.2,125.9],[100.9,114.2,127.9]],
+ f:[[47.4,57.3,69.5],[53.5,64,75.5],[58.6,69.4,80.4],[62.9,73.9,84.7],[66.8,77.8,88.9],[69.9,80.8,92.5],[72.3,83.1,95.5],[74.4,85.2,98.3],[76.6,87.4,101.1],[79.1,90.3,104.2],[81.9,93.4,107.2],[84.5,96.3,109.7],[87,98.9,111.9],[89.5,101.3,114],[91.4,103,115.8],[92.7,104,117.3],[93.6,104.6,118.6],[94.3,105,119.8],[94.8,105.2,121]]};
+// WHO/ICCIDD 2004 (Zimmermann MB и др. Am J Clin Nutr 2004;79:231): P97 объёма щитовидной железы, мл
+const WHO_AGE={6:[2.91,2.84],7:[3.29,3.26],8:[3.71,3.76],9:[4.19,4.32],10:[4.73,4.98],11:[5.34,5.73],12:[6.03,6.59]};
+const WHO_BSA={0.7:[2.62,2.56],0.8:[2.95,2.91],0.9:[3.32,3.32],1.0:[3.73,3.79],1.1:[4.2,4.32],1.2:[4.73,4.92],1.3:[5.32,5.61]};
+const bsaDB=(h,w)=>0.007184*Math.pow(w,0.425)*Math.pow(h,0.725);
+const kZ=(x,r)=>{const M=r[1],L=r[3],S=r[4];return (Math.pow(x/M,L)-1)/(L*S)};
+const kVer=(x,lo,hi)=>x<lo?'<span class="warn">меньше нормы</span>':x>hi?'<span class="warn">больше нормы</span>':'<span class="ok">в пределах нормы</span>';
+function calcKid(){
+ const y=parseInt($('kY').value)||0,mo=parseInt($('kM').value)||0,mAge=y*12+mo,ay=mAge/12,sx=$('kSex').value,h=num('kH'),w=num('kW');
+ const hasAge=$('kY').value!==''||$('kM').value!=='';
+ if(!hasAge&&!h){$('kRes').innerHTML='Укажите возраст и/или рост ребёнка';return}
+ const out=[];const L=(t,s)=>out.push(`<div class="kr"><b>${t}</b><br>${s}</div>`);
+ const bsa=h&&w?bsaDB(h,w):null;
+ if(bsa)out.push(`<div class="kr">ППТ (DuBois): <b>${f(bsa,2)} м²</b></div>`);
+ // почки
+ const kr=num('kKr'),kl=num('kKl');let ks='';
+ if(h){const i=obIdx(h),r=OBH[i];ks+=`По росту (${obHLab(i)}): норма <b>${f(r[0])}–${f(r[2])} мм</b>, медиана ${f(r[1])} мм.`;
+  [['правая',kr],['левая',kl]].forEach(([n,x])=>{if(x){const z=kZ(x,r),p=ncdf(z)*100;ks+=`<br>${n[0].toUpperCase()+n.slice(1)} ${fm(x)} мм — ${kVer(x,r[0],r[2])}, перцентиль ≈ ${p<1?'< 1':p>99?'> 99':Math.round(p)}`}})}
+ if(hasAge&&ay<19){const r=OBA[sx][Math.min(18,Math.floor(ay))];ks+=(ks?'<br>':'')+`По возрасту и полу: норма ${f(r[0])}–${f(r[2])} мм, медиана ${f(r[1])} мм.`;
+  if(!h)[['правая',kr],['левая',kl]].forEach(([n,x])=>{if(x)ks+=`<br>${n[0].toUpperCase()+n.slice(1)} ${fm(x)} мм — ${kVer(x,r[0],r[2])}`})}
+ if(kr&&kl&&Math.abs(kr-kl)>0)ks+=`<br>Разница длины: ${fm(Math.abs(kr-kl))} мм`;
+ if(ks)L('Почки, длина (Obrycki 2022)',ks+(h?'':'<br><span class="note" style="margin:0">Оценка по росту точнее — рост лучший предиктор длины почки.</span>'));
+ // печень и селезёнка
+ const lv=num('kLiv'),sp=num('kSpl');
+ if(hasAge||h){const ra=hasAge?konByAge(mAge):null,rh=h?konByH(h):null;
+  const one=(nm,i,x)=>{let s='';if(ra)s+=`По возрасту (${konLab(ra)}): норма <b>${ra[i]}–${ra[i+1]} мм</b>`;if(rh&&rh!==ra)s+=(s?'<br>':'')+`По росту (${rh[2]}–${rh[3]} см): норма ${rh[i]}–${rh[i+1]} мм`;
+   const r=ra||rh;if(x)s+=`<br>${fm(x)} мм — ${kVer(x,r[i],r[i+1])}`;L(nm,s)};
+  one('Печень, правая доля — КВР по среднеключичной линии (Konuş 1998)',4,lv);one('Селезёнка, длина (Konuş 1998)',6,sp);
+  if(hasAge&&mAge>200)out.push('<div class="kr note">Старше 16,5 лет — данные Konuş заканчиваются; ориентируйтесь на нормы взрослых.</div>')}
+ // холедох
+ if(hasAge){const cb=num('kCbd'),lim=mAge<=3?1.2:3.3;L('Холедох (Hernanz-Schulman 1995)',`Верхняя граница: <b>${mAge<=3?'< 1,2 мм (до 3 мес)':'< 3,3 мм (у детей до 13 лет)'}</b>`+(cb?`<br>${fm(cb)} мм — ${cb>=lim?'<span class="warn">больше нормы</span>':'<span class="ok">в пределах нормы</span>'}`:'')+(ay>13?'<br><span class="note" style="margin:0">Старше 13 лет данных нет — ориентир взрослых (до 6 мм).</span>':''))}
+ // лоханка
+ const pe=num('kPel');if(pe)L('Лоханка, ПЗР (UTD, Nguyen 2014)',`${fm(pe)} мм — ${pe>=10?'<span class="warn">расширение (≥ 10 мм по UTD)</span>':'<span class="ok">норма (< 10 мм)</span>'}`);
+ // щитовидная
+ const tv=num('kTv');
+ if(hasAge){let s='';const ia=Math.floor(ay),g=sx==='m'?0:1;
+  if(WHO_AGE[ia])s+=`По возрасту (${ia} лет): P97 = <b>${f(WHO_AGE[ia][g],2)} мл</b>`;
+  if(bsa){const b=Math.round(bsa*10)/10;if(WHO_BSA[b])s+=(s?'<br>':'')+`По ППТ (${f(b)} м²): P97 = <b>${f(WHO_BSA[b][g],2)} мл</b>`}
+  if(s){if(tv){const lim=bsa&&WHO_BSA[Math.round(bsa*10)/10]?WHO_BSA[Math.round(bsa*10)/10][g]:WHO_AGE[ia][g];s+=`<br>${f(tv,2)} мл — ${tv>lim?'<span class="warn">больше P97 — увеличена</span>':'<span class="ok">не увеличена</span>'}`}
+   L('Щитовидная железа, общий объём (WHO 2004)',s)}
+  else if(tv||ia<6||ia>12)L('Щитовидная железа (WHO 2004)','Референс WHO — только для 6–12 лет'+(ay>12?'':''))}
+ // мочевой пузырь
+ if(hasAge&&ay>=4){const ebc=ay<=12?(Math.floor(ay)+1)*30:390,bv=num('kBv'),pv=num('kPvr');let s=`Ожидаемая ёмкость: <b>${ebc} мл</b> (${ay<=12?'по формуле (возраст + 1) × 30':'как у взрослого'})`;
+  if(bv)s+=`<br>Объём ${fm(bv)} мл — ${Math.round(bv/ebc*100)}% ожидаемой ёмкости`;
+  if(pv){const base=bv||ebc;
+   if(ay>=4&&ay<7){const hi=pv>30||pv/base>0.21;s+=`<br>Остаточная моча ${fm(pv)} мл — ${hi?'<span class="warn">увеличена (> 30 мл или > 21%)</span>':'<span class="ok">норма</span>'}`}
+   else if(ay>=7&&ay<=12){const hi=pv>20||pv/base>0.15;s+=`<br>Остаточная моча ${fm(pv)} мл — ${hi?'<span class="warn">увеличена (> 20 мл или > 15%)</span>':'<span class="ok">норма</span>'}`}
+   else s+=`<br>Остаточная моча ${fm(pv)} мл — старше 12 лет используйте пороги взрослых`}
+  L('Мочевой пузырь (ICCS 2016)',s+'<br><span class="note" style="margin:0">Пороги остаточной мочи — для однократного измерения; при повторных: 4–6 лет > 20 мл / > 10%, 7–12 лет > 10 мл / > 6%.</span>')}
+ else if(hasAge&&(num('kBv')||num('kPvr')))L('Мочевой пузырь (ICCS 2016)','Ожидаемая ёмкость и пороги остаточной мочи ICCS даны для детей с 4 лет.');
+ if(hasAge&&mAge<=6)out.push('<div class="kr note">Пилоростеноз: толщина мышечного слоя ≥ 3 мм и длина канала ≥ 15 мм (Hernanz-Schulman 2003).</div>');
+ $('kRes').innerHTML=out.join('');
+}
+// таблицы для вкладки «Нормы → Дети»
+function renderKidNorms(){
+ const T=(h,rows)=>`<div class="tablewrap" style="margin-bottom:14px"><table><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</table></div>`;
+ let s='<div class="sub">Печень и селезёнка (Konuş 1998), мм — предлагаемые границы нормы</div>'+T(['Возраст','Рост, см','Печень, правая доля (КВР по СКЛ)','Селезёнка, длина'],KON.map(r=>[konLab(r),`${r[2]}–${r[3]}`,`${r[4]}–${r[5]}`,`${r[6]}–${r[7]}`]));
+ s+='<div class="sub">Длина почки по росту (Obrycki 2022), мм — правая и левая одинаково</div>'+T(['Рост','P2,5','P50','P97,5'],OBH.map((r,i)=>[obHLab(i),f(r[0]),f(r[1]),f(r[2])]));
+ s+='<div class="sub">Длина почки по возрасту и полу (Obrycki 2022), мм: P2,5–P97,5 (медиана)</div>'+T(['Возраст, лет','Мальчики','Девочки'],OBA.m.map((r,i)=>[`${i}–${i+1}`,`${f(r[0])}–${f(r[2])} (${f(r[1])})`,`${f(OBA.f[i][0])}–${f(OBA.f[i][2])} (${f(OBA.f[i][1])})`]));
+ s+='<div class="sub">Щитовидная железа: верхняя граница (P97) общего объёма, мл (WHO 2004)</div>'+T(['Возраст, лет','Мальчики','Девочки'],Object.entries(WHO_AGE).map(([a,v])=>[a,f(v[0],2),f(v[1],2)]))+T(['ППТ, м²','Мальчики','Девочки'],Object.entries(WHO_BSA).map(([a,v])=>[f(+a),f(v[0],2),f(v[1],2)]));
+ s+='<div class="sub">Прочее</div>'+T(['Параметр','Норма','Источник'],[
+  ['Холедох','до 3 мес < 1,2 мм; до 13 лет < 3,3 мм','Hernanz-Schulman 1995'],
+  ['Лоханка, ПЗР (постнатально)','< 10 мм; ≥ 10 мм — расширение','UTD, Nguyen 2014'],
+  ['Ожидаемая ёмкость мочевого пузыря','(возраст в годах + 1) × 30 мл, до 12 лет','ICCS 2016'],
+  ['Остаточная моча, 4–6 лет','≤ 30 мл и ≤ 21% ёмкости (однократно)','ICCS 2016'],
+  ['Остаточная моча, 7–12 лет','≤ 20 мл и ≤ 15% ёмкости (однократно)','ICCS 2016'],
+  ['Пилорус (пилоростеноз)','мышца ≥ 3 мм и канал ≥ 15 мм — пилоростеноз','Hernanz-Schulman 2003']]);
+ $('nKids').innerHTML=s;
+}
+$('nAd').onclick=()=>{$('nAd').classList.add('active');$('nKd').classList.remove('active');$('nAdult').style.display='';$('nKidW').style.display='none'};
+$('nKd').onclick=()=>{$('nKd').classList.add('active');$('nAd').classList.remove('active');$('nAdult').style.display='none';$('nKidW').style.display=''};
+renderKidNorms();
+function recalc(){calcKid();calcThy();calcPr();calcB();calcO();calcE();calcT();calcCRL();calcLMP();calcPU();calcIVF();calcH()}
 document.addEventListener('input',e=>{if(e.target.id==='nSearch')renderNorms();else if(e.target.id!=='tplText')recalc()});
 document.addEventListener('change',e=>{if(e.target.tagName!=='TEXTAREA')recalc()});
 $('crlDate').value=$('lmpDate').value=$('puNow').value=$('ivfNow').value=toInput(today());
