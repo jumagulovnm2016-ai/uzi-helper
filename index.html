@@ -4,7 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Помощник врача УЗИ</title>
-<meta name="theme-color" content="#0a7b83">
+<meta name="theme-color" content="#0a7b83" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f171c" media="(prefers-color-scheme: dark)">
+<script>try{var t=localStorage.getItem('uziTheme');if(t==="light"||t==="dark")document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -13,28 +15,31 @@
 <meta name="apple-mobile-web-app-title" content="Помощник УЗИ">
 <meta name="description" content="Калькуляторы, нормы и шаблоны протоколов для врача ультразвуковой диагностики">
 <style>
-:root{--bg:#f4f7fa;--card:#fff;--text:#1b2733;--muted:#5d6b78;--line:#dde4ea;--accent:#0a7b83;--accent-soft:#e3f3f4;--ok:#1e8e3e;--warn:#c77700;--bad:#c62828}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f161c;--card:#172129;--text:#e5ecf1;--muted:#93a3b0;--line:#2a3742;--accent:#3cc2c9;--accent-soft:#163238;--ok:#5bc47a;--warn:#f0a840;--bad:#ef6b6b}}
-:root[data-theme="dark"]{--bg:#0f161c;--card:#172129;--text:#e5ecf1;--muted:#93a3b0;--line:#2a3742;--accent:#3cc2c9;--accent-soft:#163238;--ok:#5bc47a;--warn:#f0a840;--bad:#ef6b6b}
+:root{--bg:#f4f7fa;--card:#fff;--text:#1b2733;--muted:#5d6b78;--line:#dde4ea;--accent:#0a7b83;--accent-soft:#e3f3f4;--ok:#1e8e3e;--warn:#c77700;--bad:#c62828;--on-accent:#fff;--head-bg:#0a7b83;--head-fg:#fff;--field:#f4f7fa;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a0f12;--card:#11181d;--text:#cfd9df;--muted:#8193a0;--line:#223039;--accent:#3aa9b0;--accent-soft:#11272b;--ok:#5cb67a;--warn:#d9a043;--bad:#e06a6a;--on-accent:#04191b;--head-bg:#0f171c;--head-fg:#cfd9df;--field:#0d1418;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0a0f12;--card:#11181d;--text:#cfd9df;--muted:#8193a0;--line:#223039;--accent:#3aa9b0;--accent-soft:#11272b;--ok:#5cb67a;--warn:#d9a043;--bad:#e06a6a;--on-accent:#04191b;--head-bg:#0f171c;--head-fg:#cfd9df;--field:#0d1418;color-scheme:dark}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-header{background:var(--accent);color:#fff;padding:18px 16px 14px}
+header{background:var(--head-bg);color:var(--head-fg);padding:18px 16px 14px;border-bottom:1px solid var(--line)}
 header h1{margin:0;font-size:21px}
 header p{margin:2px 0 0;opacity:.85;font-size:13px}
 header{position:relative}
-#instBtn{display:none;position:absolute;right:16px;top:16px;background:#fff;color:var(--accent);border:none;border-radius:18px;padding:7px 12px;font:600 13px/1 system-ui,sans-serif;cursor:pointer}
-#offBadge{display:none;font-size:12px;background:rgba(255,255,255,.2);border-radius:10px;padding:2px 8px;margin-left:6px}
+.hctl{position:absolute;right:16px;top:14px;display:flex;gap:8px;align-items:center}
+.thm{display:flex;border:1px solid currentColor;border-radius:18px;overflow:hidden;opacity:.9}.thm button{background:transparent;color:inherit;border:none;padding:7px 10px;min-width:34px;font:600 13px/1 system-ui,sans-serif;cursor:pointer}.thm button.on{background:var(--head-fg);color:var(--head-bg)}
+@media(max-width:520px){header{padding-right:16px}header h1{padding-right:112px}#instBtn{position:absolute;right:0;top:36px}}
+#instBtn{display:none;background:var(--head-fg);color:var(--head-bg);border:none;border-radius:18px;padding:7px 12px;font:600 13px/1 system-ui,sans-serif;cursor:pointer}
+#offBadge{display:none;font-size:12px;background:color-mix(in srgb,currentColor 18%,transparent);border-radius:10px;padding:2px 8px;margin-left:6px}
 #iosHint{display:none;background:var(--accent-soft);color:var(--text);font-size:13px;padding:10px 16px;border-bottom:1px solid var(--line)}
 nav{display:flex;gap:6px;padding:10px 16px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5;overflow-x:auto}
 nav button{flex:none;border:1px solid var(--line);background:transparent;color:var(--text);padding:8px 14px;border-radius:20px;font-size:14px;cursor:pointer}
-nav button.active{background:var(--accent);border-color:var(--accent);color:#fff}
+nav button.active{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
 main{max-width:980px;margin:0 auto;padding:16px}
 .tab{display:none}.tab.active{display:block}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:14px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
 .card h3{margin:0 0 10px;font-size:16px;color:var(--accent)}
 label{display:block;font-size:12px;color:var(--muted);margin-bottom:2px}
-input,select,textarea{width:100%;padding:8px 9px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--text);font:inherit}
+input,select,textarea{width:100%;padding:8px 9px;border:1px solid var(--line);border-radius:8px;background:var(--field);color:var(--text);font:inherit}
 .row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px}
 .row2{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:8px}
 .sub{font-size:13px;font-weight:600;margin:8px 0 4px}
@@ -50,9 +55,9 @@ th{color:var(--muted);font-weight:600;font-size:12px}
 td:first-child{font-weight:600;white-space:nowrap}
 .tablewrap{overflow-x:auto}
 textarea{min-height:320px;font-family:ui-monospace,Consolas,monospace;font-size:13px;line-height:1.45}
-.btn{border:none;background:var(--accent);color:#fff;padding:9px 16px;border-radius:8px;font:inherit;cursor:pointer}
-.kr{margin:7px 0;line-height:1.45}.nsw{display:flex;gap:6px;margin-bottom:10px}.nsw button{border:1px solid var(--line);background:transparent;color:var(--text);padding:6px 14px;border-radius:18px;cursor:pointer;font:inherit;font-size:14px}.nsw button.active{background:var(--accent);border-color:var(--accent);color:#fff}
-.vbar{display:flex;align-items:center;gap:10px;margin:10px 0 2px;flex-wrap:wrap}.vst{font-size:13px;color:var(--muted)}#vBtn.rec{background:var(--bad);animation:vp 1.2s infinite}#vBtn:disabled{opacity:.5;cursor:default}@keyframes vp{50%{opacity:.65}}.vtx{display:flex;gap:8px;margin:6px 0 2px}.vtx input{flex:1;min-width:0}.vlog{font-size:13px;line-height:1.45;margin:2px 0}#vLive{color:var(--muted);font-style:italic}#vHeard{color:var(--muted)}#vDone b{color:var(--accent);font-weight:600}.vfill{box-shadow:0 0 0 3px var(--accent)!important}.vhelp{font-size:13px;margin:4px 0 8px;color:var(--muted)}.vhelp summary{cursor:pointer;color:var(--accent);font-weight:600}
+.btn{border:none;background:var(--accent);color:var(--on-accent);padding:9px 16px;border-radius:8px;font:inherit;cursor:pointer}
+.kr{margin:7px 0;line-height:1.45}.nsw{display:flex;gap:6px;margin-bottom:10px}.nsw button{border:1px solid var(--line);background:transparent;color:var(--text);padding:6px 14px;border-radius:18px;cursor:pointer;font:inherit;font-size:14px}.nsw button.active{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.vbar{display:flex;align-items:center;gap:10px;margin:10px 0 2px;flex-wrap:wrap}.vst{font-size:13px;color:var(--muted)}#vBtn.rec{background:var(--bad);color:#fff;animation:vp 1.2s infinite}#vBtn:disabled{opacity:.5;cursor:default}@keyframes vp{50%{opacity:.65}}.vtx{display:flex;gap:8px;margin:6px 0 2px}.vtx input{flex:1;min-width:0}.vlog{font-size:13px;line-height:1.45;margin:2px 0}#vLive{color:var(--muted);font-style:italic}#vHeard{color:var(--muted)}#vDone b{color:var(--accent);font-weight:600}.vfill{box-shadow:0 0 0 3px var(--accent)!important}.vhelp{font-size:13px;margin:4px 0 8px;color:var(--muted)}.vhelp summary{cursor:pointer;color:var(--accent);font-weight:600}
 .btn.sec{background:transparent;color:var(--accent);border:1px solid var(--accent)}
 .bar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
 .note{font-size:12px;color:var(--muted);margin-top:6px}
@@ -65,7 +70,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px 16px 30p
 .flag{padding:6px 9px;border-radius:8px;background:var(--bg);border-left:3px solid var(--warn)}
 .flag.bad{border-left-color:var(--bad)}.flag.okf{border-left-color:var(--ok);color:var(--ok);font-weight:600}
 #genOut{min-height:380px}
-.jump{display:none;position:fixed;right:16px;bottom:18px;z-index:9;background:var(--accent);color:#fff;border:none;border-radius:24px;padding:11px 16px;font:600 14px/1 system-ui,sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.25);cursor:pointer}
+.jump{display:none;position:fixed;right:16px;bottom:18px;z-index:9;background:var(--accent);color:var(--on-accent);border:none;border-radius:24px;padding:11px 16px;font:600 14px/1 system-ui,sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.25);cursor:pointer}
 @media(max-width:859px){#gen.active~.jump,body:has(#gen.active) .jump{display:block}}
 .edited{font-size:12px;color:var(--warn);margin:4px 0;display:none}
 @media(min-width:860px){#gen .grid{grid-template-columns:1fr 1fr;align-items:start}#gen .outcard{position:sticky;top:60px}}
@@ -75,7 +80,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px 16px 30p
 <body>
 <header>
   <h1>Помощник врача УЗИ<span id="offBadge">офлайн</span></h1>
-  <button id="instBtn">Установить</button>
+  <div class="hctl"><div class="thm" role="group" aria-label="Тема оформления"><button type="button" data-t="system" title="Как в системе" aria-label="Тема как в системе">Авто</button><button type="button" data-t="light" title="Светлая" aria-label="Светлая тема">☀</button><button type="button" data-t="dark" title="Тёмная — для затемнённого кабинета" aria-label="Тёмная тема">☾</button></div><button id="instBtn">Установить</button></div>
   <p>Калькуляторы · генератор заключений · нормы · шаблоны</p>
 </header>
 <div id="iosHint">Чтобы установить на iPhone: кнопка «Поделиться» <b>⎋</b> → «На экран „Домой“». <a href="#" id="iosClose">Скрыть</a></div>
@@ -1778,6 +1783,17 @@ function calcFPel(){
  else{cat='норма';c='ok';rec='дополнительного наблюдения не требуется'}
  $('fPelRes').innerHTML=`Лоханка ${fm(p)} мм на ${fm(w)} нед. (порог ${lo} мм) — <span class="${c}">${cat}</span><br>Тактика: ${rec}.`;
 }
+// ===== ТЕМА: системная / светлая / тёмная =====
+(function(){const btns=document.querySelectorAll('.thm button');
+ function apply(t){const r=document.documentElement;if(t==='light'||t==='dark')r.setAttribute('data-theme',t);else r.removeAttribute('data-theme');
+  btns.forEach(b=>b.classList.toggle('on',b.dataset.t===t));
+  const dark=t==='dark'||(t==='system'&&matchMedia('(prefers-color-scheme: dark)').matches);
+  document.querySelectorAll('meta[name="theme-color"]').forEach(m=>{if(t==='system'){m.content=/dark/.test(m.media)?'#0f171c':'#0a7b83'}else m.content=dark?'#0f171c':'#0a7b83'})}
+ let cur='system';try{cur=localStorage.getItem('uziTheme')||'system'}catch(e){}
+ apply(cur);
+ btns.forEach(b=>b.onclick=()=>{cur=b.dataset.t;try{localStorage.setItem('uziTheme',cur)}catch(e){}apply(cur)});
+ matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{if(cur==='system')apply('system')});
+})();
 function recalc(){calcAFI();calcCx();calcFPel();calcKid();calcThy();calcPr();calcB();calcO();calcE();calcT();calcCRL();calcLMP();calcPU();calcIVF();calcH()}
 document.addEventListener('input',e=>{if(e.target.id==='nSearch')renderNorms();else if(e.target.id!=='tplText')recalc()});
 document.addEventListener('change',e=>{if(e.target.tagName!=='TEXTAREA')recalc()});
