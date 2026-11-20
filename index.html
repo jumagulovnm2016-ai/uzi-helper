@@ -212,27 +212,39 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:20px 16px 30p
 <div class="grid">
   <div class="card">
     <h3>ACR TI-RADS (2017)</h3>
+    <div class="row2">
+      <div><label for="tLobe">Локализация</label><select id="tLobe"><option value="0">правая доля</option><option value="1">левая доля</option><option value="2">перешеек</option></select></div>
+      <div><label for="tSeg">Отдел</label><select id="tSeg"><option value="0">— не указан —</option><option value="1">верхняя треть</option><option value="2">средняя треть</option><option value="3">нижняя треть</option></select></div>
+    </div>
     <label>Структура (composition)</label>
     <select id="tComp"><option value="cy">Кистозный / почти полностью кистозный (0)</option><option value="sp">Губчатый (0)</option><option value="1">Смешанный кистозно-солидный (1)</option><option value="2" selected>Солидный / почти полностью солидный (2)</option></select>
     <label style="margin-top:8px">Эхогенность</label>
-    <select id="tEcho"><option value="0">Анэхогенный (0)</option><option value="1">Гипер- / изоэхогенный (1)</option><option value="2" selected>Гипоэхогенный (2)</option><option value="3">Выраженно гипоэхогенный (3)</option></select>
+    <select id="tEcho"><option value="0">Анэхогенный (0)</option><option value="1">Гиперэхогенный (1)</option><option value="1">Изоэхогенный (1)</option><option value="2" selected>Гипоэхогенный (2)</option><option value="3">Выраженно гипоэхогенный (3)</option></select>
     <label style="margin-top:8px">Форма (в поперечном сечении)</label>
     <select id="tShape"><option value="0">Шире, чем выше (0)</option><option value="3">Выше, чем шире (3)</option></select>
     <label style="margin-top:8px">Контур</label>
-    <select id="tMargin"><option value="0">Ровный (0)</option><option value="0">Нечёткий (0)</option><option value="2">Дольчатый / неровный (2)</option><option value="3">Экстратиреоидное распространение (3)</option></select>
+    <select id="tMargin"><option value="0">Ровный (0)</option><option value="0">Нечёткий (0)</option><option value="2">Дольчатый (2)</option><option value="2">Неровный (2)</option><option value="3">Экстратиреоидное распространение (3)</option></select>
     <div class="sub">Эхогенные включения (можно несколько)</div>
-    <label class="chk"><input type="checkbox" class="tf" value="0"> Нет / крупные артефакты «хвост кометы» (0)</label>
-    <label class="chk"><input type="checkbox" class="tf" value="1"> Макрокальцинаты (1)</label>
-    <label class="chk"><input type="checkbox" class="tf" value="2"> Периферические («ободковые») кальцинаты (2)</label>
-    <label class="chk"><input type="checkbox" class="tf" value="3"> Точечные эхогенные фокусы (3)</label>
-    <label style="margin-top:8px">Максимальный размер узла, мм</label>
-    <input id="tSize" inputmode="decimal" placeholder="напр. 14">
+    <label class="chk"><input type="checkbox" class="tf" value="0" data-t="comet"> Крупные артефакты «хвост кометы» (0)</label>
+    <label class="chk"><input type="checkbox" class="tf" value="1" data-t="macro"> Макрокальцинаты (1)</label>
+    <label class="chk"><input type="checkbox" class="tf" value="2" data-t="rim"> Периферические («ободковые») кальцинаты (2)</label>
+    <label class="chk"><input type="checkbox" class="tf" value="3" data-t="punct"> Точечные эхогенные фокусы (3)</label>
+    <div class="note" style="margin-top:2px">Ни одна галочка не отмечена — эхогенных включений нет (0).</div>
+    <div class="sub">Размеры узла, мм</div>
+    <div class="row"><input id="ts1" inputmode="decimal" placeholder="A"><input id="ts2" inputmode="decimal" placeholder="B"><input id="ts3" inputmode="decimal" placeholder="C"></div>
+    <label style="margin-top:4px">Максимальный размер узла, мм</label>
+    <input id="tSize" inputmode="decimal" placeholder="по умолчанию — наибольший из A, B, C">
+    <label style="margin-top:8px" for="tVasc">Кровоток при ЦДК (в баллах ACR не учитывается)</label>
+    <select id="tVasc"><option value="0">— не указан —</option><option value="1">аваскулярный</option><option value="2">перинодулярный</option><option value="3">интранодулярный</option><option value="4">смешанный (пери- и интранодулярный)</option></select>
     <div class="note">ACR: губчатый узел — 0 баллов, остальные признаки не добавляются. Кистозный узел — эхогенность считается анэхогенной (0).</div>
   </div>
   <div class="card">
     <h3>Результат</h3>
     <div class="res" id="tRes" style="font-size:15px"></div>
-    <div class="tablewrap" style="margin-top:12px">
+    <div class="sub" style="margin-top:12px">Фраза для протокола</div>
+    <textarea id="tTxt" style="min-height:160px;font-family:inherit;font-size:14px"></textarea>
+    <div class="bar"><button class="btn" id="tCopy">Копировать</button></div>
+    <div class="tablewrap" style="margin-top:6px">
     <table>
       <tr><th>Категория</th><th>Баллы</th><th>ТАБ</th><th>Наблюдение</th></tr>
       <tr><td>TR1</td><td>0</td><td>нет</td><td>нет</td></tr>
@@ -613,14 +625,41 @@ function calcT(){
   else if(p<=6){tr='TR4 — умеренно подозрительный';fna=15;fu=10;cls='warn'}
   else {tr='TR5 — высоко подозрительный';fna=10;fu=5;cls='bad'}
   let s=`Сумма баллов: <b>${p}</b>${sp?' (губчатый узел — прочие признаки не учитываются)':cy?' (кистозный — эхогенность = анэхогенный)':''}<br><span class="${cls}">ACR ${tr}</span><br>`;
-  const sz=num('tSize');
+  const dims=['ts1','ts2','ts3'].map(num).filter(x=>x);
+  const sz=num('tSize')||(dims.length?Math.max(...dims):null);
   if(fna===null)s+='ТАБ не показана.';
   else if(!sz)s+=`ТАБ при размере ≥ ${fna} мм; наблюдение при ≥ ${fu} мм.`;
   else if(sz>=fna)s+=`<b>Рекомендована ТАБ</b> (размер ${f(sz,0)} мм ≥ ${fna} мм).`;
   else if(sz>=fu)s+=`<b>Динамическое наблюдение</b> (размер ${f(sz,0)} мм ≥ ${fu} мм).`;
   else s+=`Размер ${f(sz,0)} мм — ниже порогов, ТАБ и наблюдение не требуются.`;
   $('tRes').innerHTML=s;
+  // фраза для протокола
+  const LB=['правой доле','левой доле','перешейке'][+$('tLobe').value],SG=['','верхней трети ','средней трети ','нижней трети '][+$('tSeg').value];
+  const loc=+$('tLobe').value===2?`В ${SG?SG+'перешейка':'перешейке'}`:`В ${SG}${SG?LB.replace('доле','доли'):LB}`;
+  const CO={cy:'кистозного строения',sp:'губчатого (спонгиоформного) строения','1':'смешанного кистозно-солидного строения','2':'солидного строения'}[comp];
+  const EI=$('tEcho').selectedIndex,EC=['анэхогенное','гиперэхогенное','изоэхогенное','гипоэхогенное','выраженно гипоэхогенное'][EI];
+  const MI=$('tMargin').selectedIndex,MA=['с ровным контуром','с нечётким контуром','с дольчатым контуром','с неровным контуром','с признаками экстратиреоидного распространения'][MI];
+  const FT={macro:'макрокальцинаты',rim:'периферические («ободковые») кальцинаты',punct:'точечные эхогенные фокусы',comet:'крупные артефакты «хвост кометы»'};
+  const foc=[...document.querySelectorAll('.tf:checked')].map(c=>FT[c.dataset.t]);
+  const szs=dims.length?`размерами ${dims.map(x=>fm(x)).join(' × ')} мм`:sz?`максимальный размер ${fm(sz)} мм`:'размерами ___ мм';
+  let d;
+  if(sp)d=`${loc} щитовидной железы определяется узловое образование ${CO}, ${szs}.`;
+  else{
+    const parts=[cy?'анэхогенное':EC,+$('tShape').value?'выше, чем шире':'шире, чем выше',MA,foc.length?`в структуре — ${foc.join(', ')}`:'без эхогенных включений'];
+    d=`${loc} щитовидной железы определяется узловое образование ${CO}: ${parts.join(', ')}, ${szs}.`;}
+  d+=['',' При ЦДК — аваскулярное.',' При ЦДК — перинодулярный кровоток.',' При ЦДК — интранодулярный кровоток.',' При ЦДК — смешанный (пери- и интранодулярный) кровоток.'][+$('tVasc').value];
+  const trn=tr.slice(0,3),FUP={TR3:'контрольное УЗИ через 1, 3 и 5 лет',TR4:'контрольное УЗИ через 1, 2, 3 и 5 лет',TR5:'контрольное УЗИ ежегодно в течение 5 лет'};
+  let rec;
+  if(fna===null)rec='ТАБ и динамическое наблюдение не требуются';
+  else if(!sz)rec=`ТАБ при размере ≥ ${fna} мм; динамическое наблюдение при ≥ ${fu} мм`;
+  else if(sz>=fna)rec='тонкоигольная аспирационная биопсия (ТАБ) под УЗ-контролем, консультация эндокринолога';
+  else if(sz>=fu)rec=`динамическое наблюдение — ${FUP[trn]}`;
+  else rec='ТАБ и динамическое наблюдение не требуются';
+  const pts=`${p} ${plu(p,'балл','балла','баллов')}`;
+  if(document.activeElement!==$('tTxt'))$('tTxt').value=`${d}\nЗаключение: узловое образование ${loc.replace(/^В /,'').replace('доле','доли').replace('перешейке','перешейка')} щитовидной железы — ACR TI-RADS ${trn} (${tr.slice(6)}, ${pts}). Рекомендовано: ${rec}.`;
 }
+$('tCopy').onclick=async()=>{const t=$('tTxt');try{await navigator.clipboard.writeText(t.value)}catch(e){t.select();document.execCommand('copy')}
+ const b=$('tCopy');b.textContent='Скопировано ✓';setTimeout(()=>b.textContent='Копировать',1500)};
 
 const today=()=>{const d=new Date();d.setHours(0,0,0,0);return d};
 const toInput=d=>new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10);
@@ -1795,7 +1834,7 @@ function calcFPel(){
  matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{if(cur==='system')apply('system')});
 })();
 function recalc(){calcAFI();calcCx();calcFPel();calcKid();calcThy();calcPr();calcB();calcO();calcE();calcT();calcCRL();calcLMP();calcPU();calcIVF();calcH()}
-document.addEventListener('input',e=>{if(e.target.id==='nSearch')renderNorms();else if(e.target.id!=='tplText')recalc()});
+document.addEventListener('input',e=>{if(e.target.id==='nSearch')renderNorms();else if(e.target.tagName!=='TEXTAREA')recalc()});
 document.addEventListener('change',e=>{if(e.target.tagName!=='TEXTAREA')recalc()});
 $('crlDate').value=$('lmpDate').value=$('puNow').value=$('ivfNow').value=toInput(today());
 renderNorms();loadTpl();recalc();
